@@ -1,10 +1,11 @@
 package gogood.gogoodapi.Controllers;
 
+import gogood.gogoodapi.Models.DTOS.CriarUsuarioDTO;
 import gogood.gogoodapi.Models.Usuario;
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,18 @@ public class UsuarioController {
         }
 
         return ResponseEntity.status(200).body(usuarios);
+    }
 
+    @PostMapping
+    public ResponseEntity cadastrar(@RequestBody @Valid CriarUsuarioDTO novoUsuario){
+        Usuario usuario = new Usuario();
+
+
+        BeanUtils.copyProperties(novoUsuario,usuario);
+
+        usuarios.add(usuario);
+
+        return ResponseEntity.status(201).build();
     }
 
 }

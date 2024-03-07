@@ -2,12 +2,14 @@ package gogood.gogoodapi.Models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gogood.gogoodapi.Enum.GeneroEnum;
+import gogood.gogoodapi.Models.DTOS.AtualizarUsuarioPut;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
+import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 import java.util.UUID;
@@ -36,5 +38,13 @@ public class Usuario {
         this.genero = genero;
         this.dt_Nascimento = dt_Nascimento;
         this.created_at = new Date();
+    }
+
+    public void atualizar(AtualizarUsuarioPut usuarioAtualizado){
+        this.nome = usuarioAtualizado.nome();
+        this.email = usuarioAtualizado.email();
+        this.senha = usuarioAtualizado.senha();
+        this.genero = usuarioAtualizado.genero();
+        this.dt_Nascimento = usuarioAtualizado.dt_Nascimento();
     }
 }

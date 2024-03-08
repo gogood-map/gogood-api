@@ -10,9 +10,11 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://viaduct.proxy.rlwy.net:44905/teste
+    url: jdbc:mysql://viaduct.proxy.rlwy.net:44905/GoGood
     username: root
     password: dEED163g3bDBfeGeHaHD1EGGha6bC46g
+  flyway:
+    baseline-on-migrate: false
 
   redis:
     lettuce:

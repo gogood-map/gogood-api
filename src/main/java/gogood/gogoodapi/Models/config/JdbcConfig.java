@@ -9,7 +9,7 @@ public class JdbcConfig {
     public JdbcConfig() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://viaduct.proxy.rlwy.net:44905/teste");
+        dataSource.setUrl("jdbc:mysql://viaduct.proxy.rlwy.net:44905/GoGood");
         dataSource.setUsername("root");
         dataSource.setPassword("dEED163g3bDBfeGeHaHD1EGGha6bC46g");
         conexaoDoBanco = new JdbcTemplate(dataSource);

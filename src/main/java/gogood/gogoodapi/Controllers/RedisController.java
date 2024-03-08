@@ -29,7 +29,7 @@ public class RedisController {
     @GetMapping
     public ResponseEntity<List<MapData>> resultado() {
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-                SELECT * FROM teste
+                SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
 
         MapList mapList = new MapList();

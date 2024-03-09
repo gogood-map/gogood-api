@@ -1,10 +1,10 @@
-package gogood.gogoodapi.Controllers;
+package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.Models.config.JdbcConfig;
-import gogood.gogoodapi.Models.MapData;
-import gogood.gogoodapi.Models.MapList;
-import gogood.gogoodapi.Models.redis.config.GenericConverter;
-import gogood.gogoodapi.Repository.MapRepository;
+import gogood.gogoodapi.models.config.JdbcConfig;
+import gogood.gogoodapi.models.MapData;
+import gogood.gogoodapi.models.MapList;
+import gogood.gogoodapi.models.redis.config.GenericConverter;
+import gogood.gogoodapi.repository.MapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

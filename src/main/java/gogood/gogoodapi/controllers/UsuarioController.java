@@ -1,21 +1,25 @@
-package gogood.gogoodapi.Controllers;
+package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.Models.DTOS.AtualizarUsuarioPut;
-import gogood.gogoodapi.Models.DTOS.CriarUsuarioDTO;
-import gogood.gogoodapi.Models.Usuario;
+import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.DTOS.CriarUsuario;
+import gogood.gogoodapi.adapters.UsuarioAdapter;
+import gogood.gogoodapi.models.Usuario;
 import jakarta.validation.Valid;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+import org.yaml.snakeyaml.parser.ParserException;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
-    private ArrayList<Usuario> usuarios = new ArrayList<Usuario>();
+    private ArrayList<Usuario> usuarios = new ArrayList<>();
 
     @GetMapping
     public ResponseEntity<List<Usuario>> listar(){
@@ -28,15 +32,14 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity cadastrar(@RequestBody @Valid CriarUsuarioDTO novoUsuario){
-        Usuario usuario = new Usuario();
+    public ResponseEntity cadastrar(@RequestBody @Valid CriarUsuario novoUsuario)  {
+
+            Usuario usuario = UsuarioAdapter.novoUsuarioParaUsuario(novoUsuario);
+
+            usuarios.add(usuario);
+            return ResponseEntity.status(201).build();
 
 
-        BeanUtils.copyProperties(novoUsuario,usuario);
-
-        usuarios.add(usuario);
-
-        return ResponseEntity.status(201).build();
     }
     @DeleteMapping("/{indice}")
     public ResponseEntity excluir(@PathVariable int indice){

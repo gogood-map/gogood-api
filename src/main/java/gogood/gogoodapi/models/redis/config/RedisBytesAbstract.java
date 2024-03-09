@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Models.redis.config;
+package gogood.gogoodapi.models.redis.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;

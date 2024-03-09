@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Models.redis.config;
+package gogood.gogoodapi.models.redis.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;

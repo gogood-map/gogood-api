@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Enum;
+package gogood.gogoodapi.enums;
 
 public enum GeneroEnum {
     MASCULINO("M"),

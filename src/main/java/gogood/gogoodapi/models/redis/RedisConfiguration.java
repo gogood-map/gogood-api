@@ -1,8 +1,8 @@
-package gogood.gogoodapi.Models.redis;
+package gogood.gogoodapi.models.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gogood.gogoodapi.Models.redis.config.RedisByteToMapListConverter;
-import gogood.gogoodapi.Models.redis.config.RedisMapListToBytesConverter;
+import gogood.gogoodapi.models.redis.config.RedisByteToMapListConverter;
+import gogood.gogoodapi.models.redis.config.RedisMapListToBytesConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Models;
+package gogood.gogoodapi.models;
 
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Models.config;
+package gogood.gogoodapi.models.config;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;

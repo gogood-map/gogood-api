@@ -1,7 +1,7 @@
-package gogood.gogoodapi.Models.redis.config;
+package gogood.gogoodapi.models.redis.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import gogood.gogoodapi.Models.MapList;
+import gogood.gogoodapi.models.MapList;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.stereotype.Component;
 

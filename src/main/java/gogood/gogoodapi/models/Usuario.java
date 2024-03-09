@@ -1,15 +1,12 @@
-package gogood.gogoodapi.Models;
+package gogood.gogoodapi.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import gogood.gogoodapi.Enum.GeneroEnum;
-import gogood.gogoodapi.Models.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.enums.GeneroEnum;
+import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.internal.IgnoreForbiddenApisErrors;
-import org.springframework.beans.BeanUtils;
 
 import java.util.Date;
 import java.util.UUID;
@@ -19,16 +16,15 @@ import java.util.UUID;
 @NoArgsConstructor
 
 public class Usuario {
-    @JsonIgnore
-    @IgnoreForbiddenApisErrors(reason = "")
     private UUID ID;
     private String nome;
     private String email;
     private String senha;
-    @Enumerated(EnumType.STRING)
-    private GeneroEnum genero;
     private Date dt_Nascimento;
     private Date created_at;
+    @Enumerated(EnumType.STRING)
+    private GeneroEnum genero;
+
 
     public Usuario(String nome, String email, String senha, GeneroEnum genero, Date dt_Nascimento) {
         this.ID = UUID.randomUUID();
@@ -39,6 +35,8 @@ public class Usuario {
         this.dt_Nascimento = dt_Nascimento;
         this.created_at = new Date();
     }
+
+
 
     public void atualizar(AtualizarUsuarioPut usuarioAtualizado){
         this.nome = usuarioAtualizado.nome();

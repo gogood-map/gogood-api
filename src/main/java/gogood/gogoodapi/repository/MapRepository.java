@@ -1,6 +1,6 @@
-package gogood.gogoodapi.Repository;
+package gogood.gogoodapi.repository;
 
-import gogood.gogoodapi.Models.MapList;
+import gogood.gogoodapi.models.MapList;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

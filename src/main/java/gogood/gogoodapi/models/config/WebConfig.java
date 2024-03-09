@@ -1,4 +1,4 @@
-package gogood.gogoodapi.Models.config;
+package gogood.gogoodapi.models.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

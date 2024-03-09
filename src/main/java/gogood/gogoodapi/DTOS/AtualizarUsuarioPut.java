@@ -1,6 +1,6 @@
-package gogood.gogoodapi.Models.DTOS;
+package gogood.gogoodapi.DTOS;
 
-import gogood.gogoodapi.Enum.GeneroEnum;
+import gogood.gogoodapi.enums.GeneroEnum;
 
 import java.util.Date;
 

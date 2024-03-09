@@ -20,7 +20,14 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
     private ArrayList<Usuario> usuarios = new ArrayList<>();
+    private void validaId(String id){
+        if (usuarios.stream().filter(
+                usuario -> usuario.getID().toString().equals(id)
+        ).toList().isEmpty()){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Usuário não encontrado");
+        }
 
+    }
     @GetMapping
     public ResponseEntity<List<Usuario>> listar(){
 
@@ -41,21 +48,25 @@ public class UsuarioController {
 
 
     }
-    @DeleteMapping("/{indice}")
-    public ResponseEntity excluir(@PathVariable int indice){
-        if(indice < 0 || indice >= usuarios.size()){
-            return ResponseEntity.status(404).build();
-        }
-        usuarios.remove(indice);
+    @DeleteMapping("/{id}")
+    public ResponseEntity excluir(@PathVariable String id){
+        validaId(id);
+
+        usuarios = (ArrayList<Usuario>) usuarios.stream().filter(
+                usuario -> !usuario.getID().toString().equals(id)
+        ).toList();
+
         return ResponseEntity.status(204).build();
     }
 
-    @PutMapping("/{indice}")
-    public ResponseEntity atualizar(@PathVariable int indice, @RequestBody AtualizarUsuarioPut dadosAtualizacao){
-        if(indice < 0 || indice >= usuarios.size()){
-            return ResponseEntity.status(404).build();
-        }
-        Usuario usuario = usuarios.get(indice);
+    @PutMapping("/{id}")
+    public ResponseEntity atualizar(@PathVariable String id, @Valid @RequestBody AtualizarUsuarioPut dadosAtualizacao){
+        validaId(id);
+
+        Usuario usuario = usuarios.stream().filter(
+                u -> u.getID().toString().equals(id)
+        ).toList().get(0);
+
         usuario.atualizar(dadosAtualizacao);
         return ResponseEntity.status(204).build();
     }

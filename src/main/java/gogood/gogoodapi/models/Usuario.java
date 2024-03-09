@@ -1,5 +1,6 @@
 package gogood.gogoodapi.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import gogood.gogoodapi.enums.GeneroEnum;
 import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
 import jakarta.persistence.EnumType;
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.UUID;
 
 @Getter
@@ -20,7 +22,9 @@ public class Usuario {
     private String nome;
     private String email;
     private String senha;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dt_Nascimento;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date created_at;
     @Enumerated(EnumType.STRING)
     private GeneroEnum genero;

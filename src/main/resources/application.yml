@@ -15,7 +15,9 @@ spring:
     password: dEED163g3bDBfeGeHaHD1EGGha6bC46g
   flyway:
     baseline-on-migrate: false
-
+  jackson:
+    serialization:
+      write-date-keys-as-timestamps: true
   redis:
     lettuce:
       pool:

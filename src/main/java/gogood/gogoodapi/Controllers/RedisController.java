@@ -27,7 +27,7 @@ public class RedisController {
     JdbcConfig jdbcConfig = new JdbcConfig();
 
     @GetMapping
-    public ResponseEntity<List<MapData>> resultado() {
+    public ResponseEntity<String> resultado() {
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
                 SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
@@ -48,7 +48,7 @@ public class RedisController {
 
         mapRepository.save(mapList);
 
-        return ResponseEntity.ok(resultado);
+        return ResponseEntity.ok().body("Ok");
     }
 
     @GetMapping("/{id}")

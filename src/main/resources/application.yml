@@ -10,14 +10,19 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://52.226.122.160:3306:3306/GoGood
+    url: jdbc:mysql://52.226.122.160:3306/GoGood
     username: root
-    password: dEED163g3bDBfeGeHaHD1EGGha6bC46g
+    password: root
   flyway:
     baseline-on-migrate: false
   jackson:
     serialization:
       write-date-keys-as-timestamps: true
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
   redis:
     lettuce:
       pool:

@@ -13,7 +13,8 @@ public class UsuarioAdapter {
                 novoUsuario.email(),
                 novoUsuario.senha(),
                 novoUsuario.genero(),
-                novoUsuario.dt_Nascimento()
+                novoUsuario.dt_Nascimento(),
+                novoUsuario.orientacaoSexual()
         );
     }
 

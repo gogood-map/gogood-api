@@ -20,14 +20,7 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
     private ArrayList<Usuario> usuarios = new ArrayList<>();
-    private void validaId(String id){
-        if (usuarios.stream().filter(
-                usuario -> usuario.getID().toString().equals(id)
-        ).toList().isEmpty()){
-            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Usuário não encontrado");
-        }
 
-    }
     @GetMapping
     public ResponseEntity<List<Usuario>> listar(){
 
@@ -71,5 +64,12 @@ public class UsuarioController {
         return ResponseEntity.status(204).build();
     }
 
+    private void validaId(String id){
+        if (usuarios.stream().filter(
+                usuario -> usuario.getID().toString().equals(id)
+        ).toList().isEmpty()){
+            throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Usuário não encontrado");
+        }
 
+    }
 }

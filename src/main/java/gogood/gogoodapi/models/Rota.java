@@ -19,6 +19,7 @@ public class Rota {
     private String horarioSaida;
     private String horarioChegada;
     private List<Etapa> etapas;
+    private Double duracaoNumerica;
 
     public Rota(){
         etapas = new ArrayList<>();

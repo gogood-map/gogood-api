@@ -1,14 +1,17 @@
 package gogood.gogoodapi.adapters;
 
 import com.google.maps.model.DirectionsLeg;
+import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import gogood.gogoodapi.models.Rota;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class RotaAdapter {
     public static Rota transformarRota(DirectionsLeg directionsLeg){
@@ -32,10 +35,19 @@ public class RotaAdapter {
         rota.setHorarioChegada(format.format(horaChegada));
 
 
-
+        rota.setDuracaoNumerica((double)directionsLeg.duration.inSeconds);
         Long distancia = directionsLeg.distance.inMeters;
 
         rota.setDistancia(distancia.doubleValue()/1000);
         return rota;
+    }
+    public static List<Rota> transformarRota(DirectionsResult result){
+        List<Rota> rotas = new ArrayList<>();
+
+        for (int i = 0; i < result.routes.length; i++) {
+            rotas.add(transformarRota(result.routes[i].legs[0]));
+        }
+
+        return rotas;
     }
 }

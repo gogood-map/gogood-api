@@ -19,7 +19,7 @@ public class ClientGoogleMaps {
 
     public static DirectionsApiRequest gerarRequestRota(){
         DirectionsApiRequest request = DirectionsApi.newRequest(gerarContextoClient());
-
+        request.alternatives(true);
 
         request.units(Unit.METRIC);
         request.region("br");

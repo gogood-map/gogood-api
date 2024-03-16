@@ -26,14 +26,12 @@ public class RotaAdapter {
         rota.setEtapas(EtapaAdapter.tranformarEtapas(directionsLeg.steps));
         rota.setDuracao(directionsLeg.duration.humanReadable);
 
-        rota.setHorarioChegada(format.format(horaChegada));
-        if(directionsLeg.arrivalTime != null){
-            rota.setHorarioChegada(directionsLeg.arrivalTime.format(DateTimeFormatter.ISO_DATE));
-        }
         rota.setHorarioSaida(format.format(horaAtual));
-        if(directionsLeg.departureTime != null){
-            rota.setHorarioSaida(directionsLeg.departureTime.format(DateTimeFormatter.ISO_DATE));
-        }
+
+
+        rota.setHorarioChegada(format.format(horaChegada));
+
+
 
         Long distancia = directionsLeg.distance.inMeters;
 

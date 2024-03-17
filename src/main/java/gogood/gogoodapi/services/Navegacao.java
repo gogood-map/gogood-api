@@ -2,6 +2,10 @@ package gogood.gogoodapi.services;
 
 import gogood.gogoodapi.models.Rota;
 import gogood.gogoodapi.strategys.RotaStrategy;
+import gogood.gogoodapi.utils.Ordenacao;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Navegacao {
 
@@ -16,7 +20,11 @@ public class Navegacao {
         this.estrategiaRota = estrategiaRota;
     }
 
-    public Rota montarRota(String localidadeOrigem, String localidadeDestino){
-       return estrategiaRota.montarRota(localidadeOrigem, localidadeDestino);
+    public List<Rota> montarRotas(String localidadeOrigem, String localidadeDestino){
+        List<Rota> rotas = estrategiaRota.montarRota(localidadeOrigem, localidadeDestino);
+
+        Ordenacao.ordenarRotaPorDuracao(rotas.toArray(new Rota[rotas.size()-1]));
+
+        return rotas;
     }
 }

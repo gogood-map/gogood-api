@@ -2,11 +2,10 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.models.Rota;
 import gogood.gogoodapi.services.Navegacao;
-import gogood.gogoodapi.strategys.rotaStrategy.APeStrategy;
-import gogood.gogoodapi.strategys.rotaStrategy.BicicletaStrategy;
-import gogood.gogoodapi.strategys.rotaStrategy.TransportePublicoStrategy;
-import gogood.gogoodapi.strategys.rotaStrategy.VeiculoStrategy;
-import gogood.gogoodapi.utils.Ordenacao;
+import gogood.gogoodapi.strategy.rotaStrategy.APeStrategy;
+import gogood.gogoodapi.strategy.rotaStrategy.BicicletaStrategy;
+import gogood.gogoodapi.strategy.rotaStrategy.TransportePublicoStrategy;
+import gogood.gogoodapi.strategy.rotaStrategy.VeiculoStrategy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

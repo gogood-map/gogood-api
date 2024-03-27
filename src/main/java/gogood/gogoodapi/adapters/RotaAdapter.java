@@ -7,11 +7,14 @@ import gogood.gogoodapi.models.Rota;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RotaAdapter {
     public static Rota transformarRota(DirectionsLeg directionsLeg){
@@ -31,14 +34,13 @@ public class RotaAdapter {
 
         rota.setHorarioSaida(format.format(horaAtual));
 
-
+        rota.setChegadaDate(directionsLeg.arrivalTime.toLocalDateTime());
         rota.setHorarioChegada(format.format(horaChegada));
 
 
-        rota.setDuracaoNumerica((double)directionsLeg.duration.inSeconds);
-        Long distancia = directionsLeg.distance.inMeters;
+        long distancia = directionsLeg.distance.inMeters;
 
-        rota.setDistancia(distancia.doubleValue()/1000);
+        rota.setDistancia((double) distancia /1000);
         return rota;
     }
     public static List<Rota> transformarRota(DirectionsResult result){

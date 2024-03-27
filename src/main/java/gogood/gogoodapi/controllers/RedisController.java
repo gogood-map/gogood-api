@@ -1,9 +1,11 @@
 package gogood.gogoodapi.controllers;
 
+import gogood.gogoodapi.models.Ocorrencia;
 import gogood.gogoodapi.models.config.JdbcConfig;
 import gogood.gogoodapi.models.MapData;
 import gogood.gogoodapi.models.MapList;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
+import gogood.gogoodapi.repository.GoGoodRepository;
 import gogood.gogoodapi.repository.MapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,18 +26,19 @@ public class RedisController {
     @Autowired
     MapRepository mapRepository;
 
+    @Autowired
+    GoGoodRepository goGoodRepository;
+
     JdbcConfig jdbcConfig = new JdbcConfig();
 
     @GetMapping
     public ResponseEntity<String> resultado() {
-        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-                SELECT * FROM ocorrencias
-                 """, new BeanPropertyRowMapper<>(MapData.class));
+        List<Ocorrencia> resultado = (List<Ocorrencia>) goGoodRepository.findAll();
 
         MapList mapList = new MapList();
         List<Map<String, Object>> mapData = new ArrayList<>();
 
-        for (MapData mapa : resultado) {
+        for (Ocorrencia mapa : resultado) {
             Map<String, Object> map = new HashMap<>();
             map.put("longitude", mapa.getLongitude());
             map.put("latitude", mapa.getLatitude());

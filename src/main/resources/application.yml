@@ -13,8 +13,6 @@ spring:
     url: jdbc:mysql://52.226.122.160:3306/GoGood
     username: root
     password: root
-  flyway:
-    baseline-on-migrate: false
   jackson:
     serialization:
       write-date-keys-as-timestamps: true

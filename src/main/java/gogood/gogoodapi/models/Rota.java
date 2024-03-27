@@ -1,10 +1,13 @@
 package gogood.gogoodapi.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +22,9 @@ public class Rota {
     private String horarioSaida;
     private String horarioChegada;
     private List<Etapa> etapas;
-    private Double duracaoNumerica;
+    @JsonIgnore
+    private LocalDateTime chegadaDate;
+
 
     public Rota(){
         etapas = new ArrayList<>();

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.strategys;
+package gogood.gogoodapi.strategy;
 
 import gogood.gogoodapi.models.Rota;
 

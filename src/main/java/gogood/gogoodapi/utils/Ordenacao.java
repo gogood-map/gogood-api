@@ -12,9 +12,9 @@ public class Ordenacao {
             int indiceMenor = i;
             for (int j = i+1; j < rotas.length; j++) {
 
-                if(Regex.manterApenasNumericos(rotas[j].getDuracao()).compareTo(
-                        Regex.manterApenasNumericos(rotas[indiceMenor].getDuracao()))
-                < 0){
+                if(rotas[i].getHorarioChegada().compareTo(
+                        rotas[j].getHorarioChegada())
+                > 0){
                     indiceMenor = j;
                 }
             }

@@ -23,8 +23,7 @@ public class Rota {
     private String horarioChegada;
     private List<Etapa> etapas;
     @JsonIgnore
-    private LocalDateTime chegadaDate;
-
+    private Long duracaoSegundos;
 
     public Rota(){
         etapas = new ArrayList<>();

@@ -14,6 +14,7 @@ import java.util.List;
 public class Etapa {
     private Coordenada coordenadaInicial;
     private Coordenada coordenadaFinal;
+    private String logradouroAtual;
     private Double distancia;
     private String instrucao;
     private List<Etapa> subEtapas;

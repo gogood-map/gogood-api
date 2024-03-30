@@ -32,9 +32,11 @@ public class RotaAdapter {
         rota.setEtapas(EtapaAdapter.tranformarEtapas(directionsLeg.steps));
         rota.setDuracao(directionsLeg.duration.humanReadable);
 
+        rota.setDuracaoSegundos(directionsLeg.duration.inSeconds);
+
         rota.setHorarioSaida(format.format(horaAtual));
 
-        rota.setChegadaDate(directionsLeg.arrivalTime.toLocalDateTime());
+
         rota.setHorarioChegada(format.format(horaChegada));
 
 

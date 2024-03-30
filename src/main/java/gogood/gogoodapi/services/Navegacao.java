@@ -23,7 +23,6 @@ public class Navegacao {
         List<Rota> rotas = estrategiaRota.montarRota(localidadeOrigem, localidadeDestino);
 
         return Ordenacao.ordenarRotaPorDuracao(rotas.toArray(new Rota[rotas.size()-1]));
-
-
     }
+
 }

@@ -12,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://52.226.122.160:3306/GoGood
     username: root
-    password: root
+    password: Root@123
   jackson:
     serialization:
       write-date-keys-as-timestamps: true

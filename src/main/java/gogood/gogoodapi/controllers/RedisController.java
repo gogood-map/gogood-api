@@ -1,12 +1,11 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.models.Ocorrencia;
 import gogood.gogoodapi.models.config.JdbcConfig;
 import gogood.gogoodapi.models.MapData;
 import gogood.gogoodapi.models.MapList;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
-import gogood.gogoodapi.repository.GoGoodRepository;
 import gogood.gogoodapi.repository.MapRepository;
+import gogood.gogoodapi.services.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,42 +21,18 @@ import java.util.*;
 @RequestMapping("/consultar")
 public class RedisController {
 
-
     @Autowired
     MapRepository mapRepository;
 
-    @Autowired
-    GoGoodRepository goGoodRepository;
-
-    JdbcConfig jdbcConfig = new JdbcConfig();
-
     @GetMapping
     public ResponseEntity<String> resultado() {
-        List<Ocorrencia> resultado = (List<Ocorrencia>) goGoodRepository.findAll();
-
-        MapList mapList = new MapList();
-        List<Map<String, Object>> mapData = new ArrayList<>();
-
-        for (Ocorrencia mapa : resultado) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("longitude", mapa.getLongitude());
-            map.put("latitude", mapa.getLatitude());
-            map.put("id", mapa.getId());
-            mapData.add(map);
-        }
-
-        mapList.setMapData(mapData);
-        mapList.setId("lista");
-
-        mapRepository.save(mapList);
-
-        return ResponseEntity.ok().body("Ok");
+        return new RedisService().post(mapRepository);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<MapList> resultadoRedis(@PathVariable String id) {
         try {
-            MapList resultado = getById(id);
+            MapList resultado = getById(id, mapRepository);
             return new ResponseEntity<>(resultado, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -65,12 +40,7 @@ public class RedisController {
 
     }
 
-    public MapList getById(String id) {
-        Optional<MapList> resultado = mapRepository.findById(id);
-        if (resultado.isPresent()) {
-            return GenericConverter.convert(resultado.get(), MapList.class);
-        } else {
-            throw new RuntimeException("Não existe lista procurada no Redis no ID: " + id);
-        }
+    public MapList getById(String id, MapRepository mapRepository) {
+        return new RedisService().getById(id , mapRepository);
     }
 }

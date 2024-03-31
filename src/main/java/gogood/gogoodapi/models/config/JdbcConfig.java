@@ -11,7 +11,7 @@ public class JdbcConfig {
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl("jdbc:mysql://52.226.122.160:3306/GoGood");
         dataSource.setUsername("root");
-        dataSource.setPassword("root");
+        dataSource.setPassword("Root@123");
         conexaoDoBanco = new JdbcTemplate(dataSource);
     }
     public JdbcTemplate getConexaoDoBanco() {

@@ -29,6 +29,11 @@ public class RedisController {
         return new RedisService().post(mapRepository);
     }
 
+    @GetMapping("/local/{latitude}/{longitude}")
+    public ResponseEntity<MapList> location(@PathVariable Double latitude, @PathVariable Double longitude) {
+        return new RedisService().getByLocation(mapRepository, latitude, longitude);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MapList> resultadoRedis(@PathVariable String id) {
         try {

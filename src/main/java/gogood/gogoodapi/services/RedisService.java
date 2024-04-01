@@ -39,6 +39,34 @@ public class RedisService {
         return ResponseEntity.ok().body("Ok");
     }
 
+    public ResponseEntity<MapList> getByLocation(MapRepository mapRepository, Double latitude, Double longitude) {
+        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
+                SELECT *, (6371 * acos(
+                        cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) +
+                        sin(radians(?)) * sin(radians(LATITUDE))
+                    )) AS distancia
+                FROM ocorrencias
+                HAVING distancia <= 2;
+                """, new Object[]{latitude, longitude, latitude}, new BeanPropertyRowMapper<>(MapData.class));
+
+        MapList mapList = new MapList();
+        List<Map<String, Object>> mapData = new ArrayList<>();
+
+        for (MapData mapa : resultado) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("longitude", mapa.getLongitude());
+            map.put("latitude", mapa.getLatitude());
+            map.put("id", mapa.getId());
+            mapData.add(map);
+        }
+
+        mapList.setMapData(mapData);
+        mapList.setId("listaLocalizacao");
+//        mapRepository.save(mapList);
+
+        return ResponseEntity.ok().body(mapList);
+    }
+
     public void saveList(List<Map<String, Object>> mapData, MapList mapList, MapRepository mapRepository){
         int totalPartes = (mapData.size() + 9999) / 10000;
 

@@ -8,6 +8,8 @@
 #spring.jpa.properties.hibernate.format_sql = true
 
 spring:
+  cache:
+    type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://52.226.122.160:3306/GoGood

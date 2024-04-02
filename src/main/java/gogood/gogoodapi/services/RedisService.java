@@ -2,14 +2,16 @@ package gogood.gogoodapi.services;
 
 import gogood.gogoodapi.models.MapData;
 import gogood.gogoodapi.models.MapList;
+import gogood.gogoodapi.models.Ocorrencias;
 import gogood.gogoodapi.models.config.JdbcConfig;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
+import gogood.gogoodapi.repository.GoGoodRepository;
 import gogood.gogoodapi.repository.MapRepository;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -18,8 +20,13 @@ public class RedisService {
     JdbcConfig jdbcConfig = new JdbcConfig();
 
 
-    public ResponseEntity<String> post(MapRepository mapRepository) {
+    @Cacheable(value = "localizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
+    @Transactional(readOnly = true)
+    public MapList getLocationCached(Double latitude, Double longitude) {
+        return getByLocation(latitude, longitude);
+    }
 
+    public ResponseEntity<String> post() {
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
                 SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
@@ -35,11 +42,11 @@ public class RedisService {
             mapData.add(map);
         }
 
-        saveList(mapData, mapList, mapRepository);
+        saveList(mapData, mapList);
         return ResponseEntity.ok().body("Ok");
     }
 
-    public ResponseEntity<MapList> getByLocation(MapRepository mapRepository, Double latitude, Double longitude) {
+    public MapList getByLocation(Double latitude, Double longitude) {
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
                 SELECT *, (6371 * acos(
                         cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) +
@@ -64,10 +71,10 @@ public class RedisService {
         mapList.setId("listaLocalizacao");
 //        mapRepository.save(mapList);
 
-        return ResponseEntity.ok().body(mapList);
+        return mapList;
     }
 
-    public void saveList(List<Map<String, Object>> mapData, MapList mapList, MapRepository mapRepository){
+    public void saveList(List<Map<String, Object>> mapData, MapList mapList){
         int totalPartes = (mapData.size() + 9999) / 10000;
 
         for (int parte = 0; parte < totalPartes; parte++) {
@@ -79,17 +86,21 @@ public class RedisService {
             mapList.setMapData(subList);
             mapList.setId("lista" + (parte + 1));
 
-            mapRepository.save(mapList);
+//            mapRepository.save(mapList);
         }
     }
 
-    public MapList getById(String id, MapRepository mapRepository) {
-        Optional<MapList> resultado = mapRepository.findById(id);
+    public Ocorrencias getById(Integer id, GoGoodRepository goGoodRepository) {
+        Optional<Ocorrencias> resultado = goGoodRepository.findById(id);
         if (resultado.isPresent()) {
-            return GenericConverter.convert(resultado.get(), MapList.class);
+            return GenericConverter.convert(resultado.get(), Ocorrencias.class);
         } else {
             throw new RuntimeException("Não existe lista procurada no Redis no ID: " + id);
         }
     }
-
+    @Cacheable(value = "ocorrencias", key = "#id")
+    @Transactional(readOnly = true)
+    public Ocorrencias getCachedMapList(Integer id, GoGoodRepository goGoodRepository) {
+        return getById(id, goGoodRepository);
+    }
 }

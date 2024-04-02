@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@RedisHash("DADOS_MAPA")
 public class MapList implements Serializable {
     @Id
     private String id;

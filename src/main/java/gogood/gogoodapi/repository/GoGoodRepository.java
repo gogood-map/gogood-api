@@ -1,7 +1,9 @@
 package gogood.gogoodapi.repository;
 
-import gogood.gogoodapi.models.Ocorrencia;
+import gogood.gogoodapi.models.Ocorrencias;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-public interface GoGoodRepository extends CrudRepository<Ocorrencia, String> {
+@Repository
+public interface GoGoodRepository extends CrudRepository<Ocorrencias, Integer> {
 }

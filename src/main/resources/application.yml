@@ -36,3 +36,5 @@ spring:
       host: 52.226.122.160
       ssl:
         enabled: false
+  main:
+    allow-circular-references: true

@@ -6,27 +6,40 @@ import gogood.gogoodapi.models.Ocorrencias;
 import gogood.gogoodapi.models.config.JdbcConfig;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
 import gogood.gogoodapi.repository.GoGoodRepository;
-import gogood.gogoodapi.repository.MapRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.Caching;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
 @Service
 public class RedisService {
     JdbcConfig jdbcConfig = new JdbcConfig();
+    List<MapList> partes = new ArrayList<>();
 
+    private ReactiveRedisTemplate redisTemplate;
 
     @Cacheable(value = "localizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
     @Transactional(readOnly = true)
-    public MapList getLocationCached(Double latitude, Double longitude) {
-        return getByLocation(latitude, longitude);
+    public Mono<MapList> getLocationCached(Double latitude, Double longitude) {
+        return Mono.fromCallable(() -> getByLocation(latitude, longitude));
     }
 
-    public ResponseEntity<String> post() {
+    public void salvarListaNoRedis() {
+        for (MapList item : partes) {
+            String chave = "parte:" + item.getId();
+            redisTemplate.opsForValue().set(chave, item);
+        }
+    }
+    public List<MapList> get(ReactiveRedisTemplate redisTemplate) {
+        this.redisTemplate = redisTemplate;
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
                 SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
@@ -42,8 +55,8 @@ public class RedisService {
             mapData.add(map);
         }
 
-        saveList(mapData, mapList);
-        return ResponseEntity.ok().body("Ok");
+        saveList(mapData);
+        return partes;
     }
 
     public MapList getByLocation(Double latitude, Double longitude) {
@@ -74,7 +87,7 @@ public class RedisService {
         return mapList;
     }
 
-    public void saveList(List<Map<String, Object>> mapData, MapList mapList){
+    public void saveList(List<Map<String, Object>> mapData){
         int totalPartes = (mapData.size() + 9999) / 10000;
 
         for (int parte = 0; parte < totalPartes; parte++) {
@@ -83,24 +96,26 @@ public class RedisService {
 
             List<Map<String, Object>> subList = mapData.subList(start, end);
 
+            MapList mapList = new MapList();
             mapList.setMapData(subList);
             mapList.setId("lista" + (parte + 1));
-
-//            mapRepository.save(mapList);
+            partes.add(mapList);
         }
+
+        salvarListaNoRedis();
     }
 
-    public Ocorrencias getById(Integer id, GoGoodRepository goGoodRepository) {
-        Optional<Ocorrencias> resultado = goGoodRepository.findById(id);
-        if (resultado.isPresent()) {
-            return GenericConverter.convert(resultado.get(), Ocorrencias.class);
-        } else {
-            throw new RuntimeException("Não existe lista procurada no Redis no ID: " + id);
-        }
-    }
-    @Cacheable(value = "ocorrencias", key = "#id")
-    @Transactional(readOnly = true)
-    public Ocorrencias getCachedMapList(Integer id, GoGoodRepository goGoodRepository) {
-        return getById(id, goGoodRepository);
-    }
+//    public Ocorrencias getById(Integer id, GoGoodRepository goGoodRepository) {
+//        Optional<Ocorrencias> resultado = goGoodRepository.findById(id);
+//        if (resultado.isPresent()) {
+//            return GenericConverter.convert(resultado.get(), Ocorrencias.class);
+//        } else {
+//            throw new RuntimeException("Não existe lista procurada no Redis no ID: " + id);
+//        }
+//    }
+//    @Cacheable(value = "listaEmCache", key = "#id")
+//    @Transactional(readOnly = true)
+//    public Ocorrencias getCachedMapList(Integer id, GoGoodRepository goGoodRepository) {
+//        return getById(id, goGoodRepository);
+//    }
 }

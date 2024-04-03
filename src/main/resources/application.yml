@@ -8,13 +8,13 @@
 #spring.jpa.properties.hibernate.format_sql = true
 
 spring:
+  cache:
+    type: redis
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://52.226.122.160:3306/GoGood
     username: root
-    password: root
-  flyway:
-    baseline-on-migrate: false
+    password: Root@123
   jackson:
     serialization:
       write-date-keys-as-timestamps: true
@@ -36,3 +36,5 @@ spring:
       host: 52.226.122.160
       ssl:
         enabled: false
+  main:
+    allow-circular-references: true

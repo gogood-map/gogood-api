@@ -1,73 +1,66 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.models.config.JdbcConfig;
-import gogood.gogoodapi.models.MapData;
 import gogood.gogoodapi.models.MapList;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
 import gogood.gogoodapi.repository.MapRepository;
+import gogood.gogoodapi.services.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.List;
 
 @RestController
+@EnableCaching
 @RequestMapping("/consultar")
 public class RedisController {
 
+    @Autowired
+    RedisService redisService;
 
     @Autowired
-    MapRepository mapRepository;
-
-    JdbcConfig jdbcConfig = new JdbcConfig();
+    private ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
     @GetMapping
-    public ResponseEntity<String> resultado() {
-        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-                SELECT * FROM ocorrencias
-                 """, new BeanPropertyRowMapper<>(MapData.class));
-
-        MapList mapList = new MapList();
-        List<Map<String, Object>> mapData = new ArrayList<>();
-
-        for (MapData mapa : resultado) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("longitude", mapa.getLongitude());
-            map.put("latitude", mapa.getLatitude());
-            map.put("id", mapa.getId());
-            mapData.add(map);
-        }
-
-        mapList.setMapData(mapData);
-        mapList.setId("lista");
-
-        mapRepository.save(mapList);
-
-        return ResponseEntity.ok().body("Ok");
+    public Mono<ResponseEntity<String>> getDadosOcorrencias() {
+        return Mono.fromCallable(() -> {
+            List<MapList> dados = redisService.get(reactiveRedisTemplate);
+            return ResponseEntity.ok("Ok");
+        }).onErrorReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro"));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<MapList> resultadoRedis(@PathVariable String id) {
-        try {
-            MapList resultado = getById(id);
-            return new ResponseEntity<>(resultado, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-
+    @GetMapping("/local/{latitude}/{longitude}")
+    public Mono<ResponseEntity<MapList>> location(@PathVariable Double latitude, @PathVariable Double longitude) {
+        return redisService.getLocationCached(latitude, longitude)
+                .map(resultado -> ResponseEntity.ok().body(resultado))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
     }
 
-    public MapList getById(String id) {
-        Optional<MapList> resultado = mapRepository.findById(id);
-        if (resultado.isPresent()) {
-            return GenericConverter.convert(resultado.get(), MapList.class);
-        } else {
-            throw new RuntimeException("Não existe lista procurada no Redis no ID: " + id);
-        }
+//    @GetMapping("/{id}")
+//    public ResponseEntity<MapList> resultadoRedis(@PathVariable String id) {
+//        try {
+//            MapList resultado = redisService.getCachedMapList(id, mapRepository);
+//            return ResponseEntity.ok().body(resultado);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+
+    @Cacheable(value = "cacheLista", key = "#chave")
+    @GetMapping("/{chave}")
+    public Mono<MapList> recuperarValorPelaChave(@PathVariable String chave) {
+        return reactiveRedisTemplate.opsForValue().get(chave)
+                .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
+                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")));
     }
+
+
 }

@@ -18,13 +18,12 @@ logging:
     reactor: DEBUG
 
 spring:
-  r2dbc:
-    pool:
-      initial-size: 20
-      max-size: 50
-    url: r2dbc:mysql://52.226.122.160:3306/GoGood?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://52.226.122.160:3306/GoGood
     username: root
     password: Root@123
+
 
   cache:
     type: redis

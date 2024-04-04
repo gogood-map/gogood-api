@@ -1,19 +1,20 @@
 package gogood.gogoodapi.controllers;
 
+import gogood.gogoodapi.models.MapData;
 import gogood.gogoodapi.models.MapList;
+import gogood.gogoodapi.models.config.JdbcConfig;
 import gogood.gogoodapi.models.redis.config.GenericConverter;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
@@ -29,61 +30,70 @@ public class RedisController {
     private final AtomicInteger counter = new AtomicInteger(1);
 
     @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
+
+    @Autowired
     private ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
-    private final R2dbcEntityTemplate r2dbcEntityTemplate;
-
-    public RedisController(R2dbcEntityTemplate r2dbcEntityTemplate) {
-        this.r2dbcEntityTemplate = r2dbcEntityTemplate;
-    }
+    JdbcConfig jdbcConfig = new JdbcConfig();
+//
+//    private final R2dbcEntityTemplate r2dbcEntityTemplate;
+//
+//    public RedisController(R2dbcEntityTemplate r2dbcEntityTemplate) {
+//        this.r2dbcEntityTemplate = r2dbcEntityTemplate;
+//    }
 
     @GetMapping
     public Mono<ResponseEntity<String>> getDadosOcorrencias() {
-        return get()
-                .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")));
+        get();
+        return Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso"));
     }
 
 
-    public Mono<Void> saveListReactive(List<Map<String, Object>> mapData) {
-        int batchSize = 5000;
-        return Flux.fromIterable(mapData)
-                .buffer(batchSize)
-                .flatMap(batch -> {
-                    MapList mapList = new MapList();
-                    mapList.setMapData(batch);
-                    String id = "lista" + counter.getAndIncrement();
-                    mapList.setId(id);
-                    return salvarListaNoRedis(Collections.singletonList(mapList));
-                }).then();
+    public void saveList(List<Map<String, Object>> mapData) {
+        int totalPartes = (mapData.size() + 9999) / 10000;
+
+        for (int parte = 0; parte < totalPartes; parte++) {
+            int start = parte * 10000;
+            int end = Math.min(start + 10000, mapData.size());
+
+            List<Map<String, Object>> subList = mapData.subList(start, end);
+
+            MapList mapList = new MapList();
+            mapList.setMapData(subList);
+            mapList.setId("lista" + (parte + 1));
+            partes.add(mapList);
+        }
+
+        salvarListaNoRedis();
     }
 
 
-    public Mono<Void> get() {
-        String query = "SELECT * FROM ocorrencias";
-        return r2dbcEntityTemplate.getDatabaseClient().sql(query)
-                .map((row, metadata) -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("longitude", row.get("longitude", Double.class));
-                    map.put("latitude", row.get("latitude", Double.class));
-                    map.put("id", row.get("id", Integer.class));
-                    return map;
-                })
-                .all()
-                .buffer(5000)
-                .flatMap(this::saveListReactive)
-                .then();
+    public void get() {
+        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
+                SELECT * FROM ocorrencias
+                 """, new BeanPropertyRowMapper<>(MapData.class));
+
+        MapList mapList = new MapList();
+        List<Map<String, Object>> mapData = new ArrayList<>();
+
+        for (MapData mapa : resultado) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("longitude", mapa.getLongitude());
+            map.put("latitude", mapa.getLatitude());
+            map.put("id", mapa.getId());
+            mapData.add(map);
+        }
+
+        saveList(mapData);
     }
 
 
-    public Mono<Void> salvarListaNoRedis(List<MapList> partes) {
-        return Flux.fromIterable(partes)
-                .flatMap(item -> {
-                    String chave = "parte:" + item.getId();
-                    return reactiveRedisTemplate.opsForValue().set(chave, item)
-                            .thenReturn(item)
-                            .doOnSuccess(i -> System.out.println("Salvo no Redis: " + chave));
-                })
-                .then();
+    public void salvarListaNoRedis() {
+        for (MapList item : partes) {
+            String chave = "parte:" + item.getId();
+            redisTemplate.opsForValue().set(chave, item);
+        }
     }
 
 //    @GetMapping("/local/{latitude}/{longitude}")

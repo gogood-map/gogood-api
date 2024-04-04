@@ -7,22 +7,28 @@
 #spring.jpa.hibernate.ddl-auto=update
 #spring.jpa.properties.hibernate.format_sql = true
 
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          r2dbc: DEBUG
+    io:
+      r2dbc: DEBUG
+    reactor: DEBUG
+
+
 spring:
-  cache:
-    type: redis
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://52.226.122.160:3306/GoGood
+
+  r2dbc:
+    url: r2dbc:mysql://52.226.122.160:3306/GoGood?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
     username: root
     password: Root@123
+  cache:
+    type: redis
   jackson:
     serialization:
       write-date-keys-as-timestamps: true
-
-  jpa:
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
   redis:
     lettuce:
       pool:

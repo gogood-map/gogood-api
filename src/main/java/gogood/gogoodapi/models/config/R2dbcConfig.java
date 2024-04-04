@@ -15,16 +15,14 @@ public final class R2dbcConfig extends AbstractR2dbcConfiguration {
     @Override
     @Bean
     public @NotNull ConnectionFactory connectionFactory() {
-        // Substituir "mysql" por "r2dbc-mysql"
         return ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "r2dbc-mysql")
-                .option(PROTOCOL, "mysql") // Este é o protocolo usado pelo MySQL. Pode ser omitido se estiver usando a opção DRIVER correta.
+                .option(PROTOCOL, "mysql")
                 .option(HOST, "52.226.122.160")
                 .option(PORT, 3306)
                 .option(USER, "root")
                 .option(PASSWORD, "Root@123")
                 .option(DATABASE, "GoGood")
-                // Removido para usar a construção de URL adequada
                 .build());
     }
 

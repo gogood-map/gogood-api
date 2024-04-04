@@ -17,25 +17,20 @@ logging:
       r2dbc: DEBUG
     reactor: DEBUG
 
-
 spring:
-
   r2dbc:
+    pool:
+      initial-size: 20
+      max-size: 50
     url: r2dbc:mysql://52.226.122.160:3306/GoGood?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
     username: root
     password: Root@123
+
   cache:
     type: redis
   jackson:
     serialization:
       write-date-keys-as-timestamps: true
-  redis:
-    lettuce:
-      pool:
-        max-active: 8 # Número máximo de conexões ativas
-        max-idle: 8 # Número máximo de conexões ociosas
-        min-idle: 0 # Número mínimo de conexões ociosas
-        max-wait: -1ms # Tempo máximo de espera por uma conexão, -1 significa sem limite
   data:
     redis:
       port: 6379

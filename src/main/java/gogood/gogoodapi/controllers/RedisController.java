@@ -63,9 +63,10 @@ public class RedisController {
             partes.add(mapList);
         }
         salvarListaNoRedis();
+        partes.clear();
     }
 
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 43200000)
     public Mono<Void> get() {
         String query = "SELECT * FROM ocorrencias";
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)

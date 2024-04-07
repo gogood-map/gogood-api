@@ -47,4 +47,4 @@ spring:
     allow-circular-references: true
   mvc:
     async:
-      request-timeout: 30000
+      request-timeout: 100000

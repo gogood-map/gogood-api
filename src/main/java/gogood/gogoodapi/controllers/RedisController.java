@@ -24,7 +24,7 @@ import java.util.Map;
 
 @RestController
 @EnableCaching
-@EnableScheduling
+//@EnableScheduling
 @RequestMapping("/consultar")
 public class RedisController {
 
@@ -66,7 +66,7 @@ public class RedisController {
         partes.clear();
     }
 
-    @Scheduled(fixedRate = 43200000)
+//    @Scheduled(fixedRate = 43200000)
     public Mono<Void> get() {
         String query = "SELECT * FROM ocorrencias";
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)

@@ -41,10 +41,8 @@ spring:
     redis:
       port: 6379
       host: 52.226.122.160
-      ssl:
-        enabled: false
   main:
     allow-circular-references: true
   mvc:
     async:
-      request-timeout: 30000
+      request-timeout: 100000

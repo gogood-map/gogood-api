@@ -22,33 +22,33 @@
 //
 //
 //
-////    public MapList getByLocation(Double latitude, Double longitude) {
-////        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-////                SELECT *, (6371 * acos(
-////                        cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) +
-////                        sin(radians(?)) * sin(radians(LATITUDE))
-////                    )) AS distancia
-////                FROM ocorrencias
-////                HAVING distancia <= 2;
-////                """, new Object[]{latitude, longitude, latitude}, new BeanPropertyRowMapper<>(MapData.class));
-////
-////        MapList mapList = new MapList();
-////        List<Map<String, Object>> mapData = new ArrayList<>();
-////
-////        for (MapData mapa : resultado) {
-////            Map<String, Object> map = new HashMap<>();
-////            map.put("longitude", mapa.getLongitude());
-////            map.put("latitude", mapa.getLatitude());
-////            map.put("id", mapa.getId());
-////            mapData.add(map);
-////        }
-////
-////        mapList.setMapData(mapData);
-////        mapList.setId("listaLocalizacao");
-//////        mapRepository.save(mapList);
-////
-////        return mapList;
-////    }
+//    public MapList getByLocation(Double latitude, Double longitude) {
+//        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
+//                SELECT *, (6371 * acos(
+//                        cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) +
+//                        sin(radians(?)) * sin(radians(LATITUDE))
+//                    )) AS distancia
+//                FROM ocorrencias
+//                HAVING distancia <= 2;
+//                """, new Object[]{latitude, longitude, latitude}, new BeanPropertyRowMapper<>(MapData.class));
+//
+//        MapList mapList = new MapList();
+//        List<Map<String, Object>> mapData = new ArrayList<>();
+//
+//        for (MapData mapa : resultado) {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("longitude", mapa.getLongitude());
+//            map.put("latitude", mapa.getLatitude());
+//            map.put("id", mapa.getId());
+//            mapData.add(map);
+//        }
+//
+//        mapList.setMapData(mapData);
+//        mapList.setId("listaLocalizacao");
+////        mapRepository.save(mapList);
+//
+//        return mapList;
+//    }
 //
 //
 //

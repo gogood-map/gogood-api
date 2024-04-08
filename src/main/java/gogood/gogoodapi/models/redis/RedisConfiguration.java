@@ -21,18 +21,14 @@ public class RedisConfiguration {
 
     @Bean
     public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
-        // Define o serializador para as chaves.
         StringRedisSerializer keySerializer = new StringRedisSerializer();
 
-        // Define o serializador para os valores.
         Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
 
-        // Configura o contexto de serialização do Redis para o nosso template.
         RedisSerializationContext.RedisSerializationContextBuilder<String, Object> builder =
                 RedisSerializationContext.newSerializationContext(keySerializer);
         RedisSerializationContext<String, Object> context = builder.value(valueSerializer).build();
 
-        // Cria e retorna o ReactiveRedisTemplate configurado.
         return new ReactiveRedisTemplate<>(factory, context);
     }
 

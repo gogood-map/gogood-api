@@ -41,15 +41,15 @@ public class RedisController {
     }
 
     @GetMapping
-    public Mono<ResponseEntity<String>> getDadosOcorrencias() {
-        return get()
+    public Mono<ResponseEntity<String>> get() {
+        return getDadosOcorrencia()
                 .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")));
     }
 
     @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
     @GetMapping("/local/{latitude}/{longitude}")
-    public Mono<MapList> location(@PathVariable Double latitude, @PathVariable Double longitude) {
-        return getByLocation(latitude, longitude)
+    public Mono<MapList> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
+        return getAndSaveByLocation(latitude, longitude)
                 .then(reactiveRedisTemplate.opsForValue().get("localizacao:" + latitude.toString()))
                 .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
                 .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")));
@@ -64,7 +64,7 @@ public class RedisController {
                 .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")));
     }
 
-    public void saveList(List<Map<String, Object>> mapData) {
+    public void salvarListaPorPartes(List<Map<String, Object>> mapData) {
         int totalPartes = (mapData.size() + 9999) / 10000;
 
         for (int parte = 0; parte < totalPartes; parte++) {
@@ -76,22 +76,22 @@ public class RedisController {
             mapList.setId("lista" + (parte + 1));
             partes.add(mapList);
         }
-        salvarListaNoRedis();
+        salvarPartesNoRedis();
         partes.clear();
     }
 
     //    @Scheduled(fixedRate = 43200000)
-    public Mono<Void> get() {
+    public Mono<Void> getDadosOcorrencia() {
         String query = "SELECT * FROM ocorrencias";
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)
                 .fetch()
                 .all()
                 .collectList()
-                .doOnNext(this::saveList)
+                .doOnNext(this::salvarListaPorPartes)
                 .then();
     }
 
-    public Mono<MapList> getByLocation(Double latitude, Double longitude) {
+    public Mono<MapList> getAndSaveByLocation(Double latitude, Double longitude) {
         String query = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LATITUDE)))) AS distancia FROM ocorrencias HAVING distancia <= 2;";
 
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)
@@ -125,7 +125,7 @@ public class RedisController {
                 });
     }
 
-    public void salvarListaNoRedis() {
+    public void salvarPartesNoRedis() {
         for (MapList item : partes) {
             String chave = "parte:" + item.getId();
             redisTemplate.opsForValue().set(chave, item);

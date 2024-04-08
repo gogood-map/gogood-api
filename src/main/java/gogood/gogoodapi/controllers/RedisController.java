@@ -43,7 +43,8 @@ public class RedisController {
     @GetMapping
     public Mono<ResponseEntity<String>> get() {
         return getDadosOcorrencia()
-                .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")));
+                .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")))
+                .onErrorResume(e -> Mono.just(ResponseEntity.status(500).body("Erro ao processar a requisição: " + e.getMessage())));
     }
 
     @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
@@ -52,7 +53,8 @@ public class RedisController {
         return getAndSaveByLocation(latitude, longitude)
                 .then(reactiveRedisTemplate.opsForValue().get("localizacao:" + latitude.toString()))
                 .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
-                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")));
+                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")))
+                .onErrorResume(e -> Mono.error(new Exception("Erro ao recuperar localização: " + e.getMessage())));
     }
 
 
@@ -61,7 +63,8 @@ public class RedisController {
     public Mono<MapList> recuperarValorPelaChave(@PathVariable String chave) {
         return reactiveRedisTemplate.opsForValue().get(chave)
                 .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
-                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")));
+                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")))
+                .onErrorResume(e -> Mono.error(new Exception("Erro ao recuperar valor pela chave: " + e.getMessage())));
     }
 
     public void salvarListaPorPartes(List<Map<String, Object>> mapData) {
@@ -77,7 +80,6 @@ public class RedisController {
             partes.add(mapList);
         }
         salvarPartesNoRedis();
-        partes.clear();
     }
 
     //    @Scheduled(fixedRate = 43200000)
@@ -130,6 +132,7 @@ public class RedisController {
             String chave = "parte:" + item.getId();
             redisTemplate.opsForValue().set(chave, item);
         }
+        partes.clear();
     }
 
 

@@ -61,6 +61,7 @@ public class RedisController {
     @Cacheable(value = "cacheLista", key = "#chave")
     @GetMapping("/{chave}")
     public Mono<MapList> recuperarValorPelaChave(@PathVariable String chave) {
+
         return reactiveRedisTemplate.opsForValue().get(chave)
                 .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
                 .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")))

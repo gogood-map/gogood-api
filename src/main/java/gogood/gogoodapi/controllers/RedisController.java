@@ -50,11 +50,7 @@ public class RedisController {
     @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
     @GetMapping("/local/{latitude}/{longitude}")
     public Mono<MapList> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
-        return getAndSaveByLocation(latitude, longitude)
-                .then(reactiveRedisTemplate.opsForValue().get("localizacao:" + latitude.toString()))
-                .flatMap(lista -> Mono.just(GenericConverter.convert(lista, MapList.class)))
-                .switchIfEmpty(Mono.error(new RuntimeException("Não existe lista procurada no Redis")))
-                .onErrorResume(e -> Mono.error(new Exception("Erro ao recuperar localização: " + e.getMessage())));
+        return getAndSaveByLocation(latitude, longitude);
     }
 
 
@@ -96,42 +92,37 @@ public class RedisController {
 
     public Mono<MapList> getAndSaveByLocation(Double latitude, Double longitude) {
         String query = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LATITUDE)))) AS distancia FROM ocorrencias HAVING distancia <= 2;";
-
         return r2dbcEntityTemplate.getDatabaseClient().sql(query)
                 .bind(0, latitude)
                 .bind(1, longitude)
                 .bind(2, latitude)
                 .map((row, metadata) -> new MapData(
-                        String.valueOf(row.get("id", Integer.class)),  // Changed from String.class to Integer.class
+                        String.valueOf(row.get("id", Integer.class)),
                         row.get("latitude", Double.class),
                         row.get("longitude", Double.class)))
                 .all()
                 .collectList()
-                .map(list -> {
+                .flatMap(list -> {
                     MapList mapList = new MapList();
                     List<Map<String, Object>> mapData = new ArrayList<>();
-                    String id = "";
-
                     for (MapData mapa : list) {
                         Map<String, Object> map = new HashMap<>();
                         map.put("longitude", mapa.getLongitude());
                         map.put("latitude", mapa.getLatitude());
-                        map.put("id", mapa.getId());  // Convert Integer to String
+                        map.put("id", mapa.getId());
                         mapData.add(map);
                     }
-
                     mapList.setMapData(mapData);
                     mapList.setId("listaLocalizacao");
-                    String chave = "localizacao:" + latitude;
-                    redisTemplate.opsForValue().set(chave, mapList);
-                    return mapList;
+                    String chave = "localizacao:" + latitude + "-" + longitude;
+                    return reactiveRedisTemplate.opsForValue().set(chave, mapList).thenReturn(mapList);
                 });
     }
 
     public void salvarPartesNoRedis() {
         for (MapList item : partes) {
             String chave = "parte:" + item.getId();
-            redisTemplate.opsForValue().set(chave, item);
+            reactiveRedisTemplate.opsForValue().set(chave, item);
         }
         partes.clear();
     }

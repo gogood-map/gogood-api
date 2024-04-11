@@ -1,9 +1,13 @@
 package gogood.gogoodapi.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class MapData{
+@AllArgsConstructor
+public class MapData implements Serializable {
     private String id;
     private Double latitude;
     private Double longitude;

@@ -5,16 +5,32 @@ import gogood.gogoodapi.models.redis.config.RedisByteToMapListConverter;
 import gogood.gogoodapi.models.redis.config.RedisMapListToBytesConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.convert.RedisCustomConversions;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.Arrays;
 
 @Configuration
 public class RedisConfiguration {
+
+    @Bean
+    public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
+        StringRedisSerializer keySerializer = new StringRedisSerializer();
+
+        Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
+
+        RedisSerializationContext.RedisSerializationContextBuilder<String, Object> builder =
+                RedisSerializationContext.newSerializationContext(keySerializer);
+        RedisSerializationContext<String, Object> context = builder.value(valueSerializer).build();
+
+        return new ReactiveRedisTemplate<>(factory, context);
+    }
 
     @Bean
     public RedisCustomConversions redisCustomConversions(ObjectMapper objectMapper) {

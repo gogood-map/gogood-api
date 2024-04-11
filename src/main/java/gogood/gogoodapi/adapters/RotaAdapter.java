@@ -4,6 +4,8 @@ import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import gogood.gogoodapi.models.Rota;
+import gogood.gogoodapi.services.AzureMapsService;
+import gogood.gogoodapi.services.ClientGoogleMaps;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,12 +20,14 @@ import java.util.concurrent.TimeUnit;
 
 public class RotaAdapter {
     public static Rota transformarRota(DirectionsLeg directionsLeg){
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat formatDuracao = new SimpleDateFormat("hh:mm:ss");
 
         Date horaAtual = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND,(int)directionsLeg.duration.inSeconds);
-        Date horaChegada = calendar.getTime();
+
+        Calendar  calendario = Calendar.getInstance();
+        calendario.add(Calendar.SECOND,(int)directionsLeg.duration.inSeconds);
+        Date horaChegada = calendario.getTime();
 
 
         Rota rota = new Rota();
@@ -32,7 +36,14 @@ public class RotaAdapter {
         rota.setEtapas(EtapaAdapter.tranformarEtapas(directionsLeg.steps));
         rota.setDuracao(directionsLeg.duration.humanReadable);
 
-        rota.setDuracaoSegundos(directionsLeg.duration.inSeconds);
+
+        calendario.setTime(horaChegada);
+
+        Duration diferenca = Duration.between(
+                horaAtual.toInstant(), horaChegada.toInstant()
+        );
+
+        rota.setDuracaoSegundos(diferenca.getSeconds());
 
         rota.setHorarioSaida(format.format(horaAtual));
 
@@ -48,8 +59,23 @@ public class RotaAdapter {
     public static List<Rota> transformarRota(DirectionsResult result){
         List<Rota> rotas = new ArrayList<>();
 
-        for (int i = 0; i < result.routes.length; i++) {
+        for (int i = 0; i < result.routes.length && i < 3; i++) {
             rotas.add(transformarRota(result.routes[i].legs[0]));
+            rotas.get(i).setPolyline(result.routes[i].overviewPolyline.getEncodedPath());
+
+            Rota rotaAtual = rotas.get(i);
+            String itensRequest = "{\"query\": \"?query=%s,%s\"}";
+            StringBuilder batchRequest = new StringBuilder();
+            rotaAtual.getEtapas().forEach(
+                etapa -> batchRequest.append(
+                        itensRequest.formatted(
+                            etapa.getCoordenadaFinal().getLat().toString(),
+                            etapa.getCoordenadaFinal().getLng()
+                        )+","
+                )
+            );
+
+            rotaAtual.setLogradouros(AzureMapsService.buscarLogradouros(batchRequest.substring(0, batchRequest.length()-1)));
         }
 
         return rotas;

@@ -10,11 +10,10 @@ public class Ordenacao {
         Rota[] rotasOrdenadas;
         for (int i = 0; i < rotas.length; i++) {
             int indiceMenor = i;
+
             for (int j = i+1; j < rotas.length; j++) {
 
-                if(rotas[i].getHorarioChegada().compareTo(
-                        rotas[j].getHorarioChegada())
-                > 0){
+                if(rotas[i].getDuracaoSegundos() > rotas[j].getDuracaoSegundos()){
                     indiceMenor = j;
                 }
             }
@@ -22,6 +21,7 @@ public class Ordenacao {
             rotas[i] = rotas[indiceMenor];
             rotas[indiceMenor] = aux;
         }
+
         rotasOrdenadas = rotas;
         return  Arrays.stream(rotasOrdenadas).toList();
     }

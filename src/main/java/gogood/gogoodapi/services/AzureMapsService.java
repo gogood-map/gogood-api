@@ -2,16 +2,17 @@ package gogood.gogoodapi.services;
 
 import org.json.JSONObject;
 import org.springframework.web.client.RestClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-public class AzureMapsService {
+public class AzureMapsService{
 
 
-    public static List<String> buscarLogradouros(String batchRequest){
+    public Mono<List<String>> buscarCeps(String batchRequest){
         RestClient clienteRest = RestClient.create();
         var requisicao = clienteRest.post().uri(
                 "https://atlas.microsoft.com/search/address/reverse/batch/sync/json?api-version=1.0&subscription-key=Tgehvd0GXs7mbEi3hb7ovpoNrfEtTkvlQMA8ANL-1zs"
@@ -42,7 +43,7 @@ public class AzureMapsService {
             while (indiceRuasAproximadas < qtdRuasAproximadas){
                 try {
                     String rua = itensRetorno.getJSONObject(i).getJSONObject("response")
-                            .getJSONArray("addresses").getJSONObject(indiceRuasAproximadas).getJSONObject("address").getString("streetName");
+                            .getJSONArray("addresses").getJSONObject(indiceRuasAproximadas).getJSONObject("address").getString("extendedPostalCode");
                     logradouros.add(rua);
                 }catch (Exception e){
                     indiceRuasAproximadas++;
@@ -53,6 +54,6 @@ public class AzureMapsService {
 
         }
 
-        return logradouros.stream().distinct().toList();
+        return Mono.just(logradouros.stream().distinct().toList());
     }
 }

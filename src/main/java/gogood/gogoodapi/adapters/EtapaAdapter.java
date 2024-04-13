@@ -23,6 +23,7 @@ public class EtapaAdapter {
                 etapa.setCoordenadaInicial(new Coordenada(etapaFor.startLocation.lat,etapaFor.startLocation.lng));
                 etapa.setCoordenadaFinal(new Coordenada(etapaFor.endLocation.lat,etapaFor.endLocation.lng));
                 DirectionsStep[] subEtapas = etapaFor.steps;
+
                 if(subEtapas != null){
                     List<Etapa> subEtapasConvertidas = new ArrayList<>();
                     for (int i = 0; i < subEtapas.length; i++) {

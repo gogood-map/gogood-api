@@ -16,14 +16,16 @@ import java.util.List;
 @AllArgsConstructor
 public class Rota {
     @JsonIgnore
-    private List<String> logradouros;
+    private List<String> ceps;
     private String origem;
     private String destino;
     private Double distancia;
     private String duracao;
     private String horarioSaida;
     private String horarioChegada;
+    private Integer qtdOcorrenciasTotais;
     private String polyline;
+
     private List<Etapa> etapas;
     @JsonIgnore
     private Long duracaoSegundos;
@@ -32,6 +34,5 @@ public class Rota {
 
     public Rota(){
         etapas = new ArrayList<>();
-
     }
 }

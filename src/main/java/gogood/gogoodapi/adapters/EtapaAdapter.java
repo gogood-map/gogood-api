@@ -26,7 +26,7 @@ public class EtapaAdapter {
 
                 if(subEtapas != null){
                     List<Etapa> subEtapasConvertidas = new ArrayList<>();
-                    for (DirectionsStep subEtapa: subEtapas){
+                    for (int i = 0; i < subEtapas.length; i++) {
                         subEtapasConvertidas = tranformarEtapas(subEtapas);
                     }
 
@@ -35,10 +35,6 @@ public class EtapaAdapter {
 
                 etapas.add(etapa);
             }
-
-
-
-
         return etapas;
     }
 }

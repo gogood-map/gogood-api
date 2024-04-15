@@ -11,8 +11,8 @@ import java.util.List;
 public class TransportePublicoStrategy implements RotaStrategy {
     @Override
     public List<Rota> montarRota(String localidadeOrigem, String localidadeDestino) {
-        return RotaAdapter.transformarRota(ClientGoogleMaps.obterRespostaRota(
+        return new RotaAdapter().transformarRotas(ClientGoogleMaps.obterRespostaRota(
                 localidadeOrigem, localidadeDestino, TravelMode.TRANSIT
-        ));
+        )).block();
     }
 }

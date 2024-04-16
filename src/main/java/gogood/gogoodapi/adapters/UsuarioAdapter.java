@@ -14,7 +14,7 @@ public class UsuarioAdapter {
                 novoUsuario.senha(),
                 novoUsuario.genero(),
                 novoUsuario.dt_Nascimento(),
-                novoUsuario.orientacaoSexual()
+                novoUsuario.google_id()
         );
     }
 

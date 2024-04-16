@@ -11,18 +11,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://52.226.122.160:3306/GoGood
+    url: jdbc:mysql://191.234.214.229:3306/GoGood
     username: root
     password: Root@123
   r2dbc:
-    url: r2dbc:mysql://52.226.122.160:3306/GoGood
+    url: r2dbc:mysql://191.234.214.229:3306/GoGood
     username: root
     password: Root@123
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://52.226.122.160:3306/GoGood
-#    username: root
-#    password: Root@123
 
   jpa:
     properties:
@@ -38,7 +33,7 @@ spring:
   data:
     redis:
       port: 6379
-      host: 52.226.122.160
+      host: 191.234.214.229
       lettuce:
         pool:
           max-active: 20

@@ -21,11 +21,11 @@ public record CriarUsuario(
         @NotBlank
         String senha,
         @NotBlank
-        GeneroEnum genero,
+        String genero,
         @Past
         @NotBlank
         Date dt_Nascimento,
 
         @NotBlank
-        String orientacaoSexual){}
+        String google_id){}
 

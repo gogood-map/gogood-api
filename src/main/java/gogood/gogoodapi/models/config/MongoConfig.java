@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class MongoConfig {
     @Bean
     public static MongoClient mongoClient(){
-        return MongoClients.create("mongodb://gogood-root:gogood24@191.239.123.2:27017");
+        return MongoClients.create("mongodb://gogood:gogood24@191.239.123.2:27017");
     }
     @Bean
     public MongoOperations mongoTemplate() {

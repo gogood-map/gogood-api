@@ -22,27 +22,22 @@ public class UsuarioController {
     private ArrayList<Usuario> usuarios = new ArrayList<>();
 
     @GetMapping
-    public ResponseEntity<List<Usuario>> listar(){
-
+    public ResponseEntity<List<Usuario>> getAll(){
         if(usuarios.isEmpty()){
            return ResponseEntity.status(204).build();
         }
-
         return ResponseEntity.status(200).body(usuarios);
     }
 
     @PostMapping
-    public ResponseEntity cadastrar(@RequestBody @Valid CriarUsuario novoUsuario)  {
-
+    public ResponseEntity<Usuario> cadastrar(@RequestBody @Valid CriarUsuario novoUsuario)  {
             Usuario usuario = UsuarioAdapter.novoUsuarioParaUsuario(novoUsuario);
-
             usuarios.add(usuario);
             return ResponseEntity.status(201).build();
-
-
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity excluir(@PathVariable String id){
+    public ResponseEntity<Usuario> excluir(@PathVariable String id){
         validaId(id);
 
         usuarios = (ArrayList<Usuario>) usuarios.stream().filter(
@@ -53,7 +48,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity atualizar(@PathVariable String id, @Valid @RequestBody AtualizarUsuarioPut dadosAtualizacao){
+    public ResponseEntity<Usuario> atualizar(@PathVariable String id, @Valid @RequestBody AtualizarUsuarioPut dadosAtualizacao){
         validaId(id);
 
         Usuario usuario = usuarios.stream().filter(

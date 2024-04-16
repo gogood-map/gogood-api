@@ -5,6 +5,7 @@ import gogood.gogoodapi.enums.GeneroEnum;
 import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,8 +13,7 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 
 public class Usuario {

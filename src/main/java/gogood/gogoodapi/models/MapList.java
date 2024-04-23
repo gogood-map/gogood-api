@@ -2,7 +2,6 @@ package gogood.gogoodapi.models;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
 import java.io.Serializable;
 import java.util.List;

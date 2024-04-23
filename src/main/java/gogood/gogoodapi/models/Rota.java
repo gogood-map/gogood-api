@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Rota {
     @JsonIgnore
-    private List<String> ceps;
+    private List<String> logradouros;
     private String origem;
     private String destino;
     private Double distancia;

@@ -9,9 +9,15 @@ import gogood.gogoodapi.strategy.RotaStrategy;
 import java.util.List;
 
 public class VeiculoStrategy implements RotaStrategy {
+    RotaAdapter rotaAdapter;
+
+    public VeiculoStrategy(RotaAdapter rotaAdapter) {
+        this.rotaAdapter = rotaAdapter;
+    }
+
     @Override
     public List<Rota> montarRota(String localidadeOrigem, String localidadeDestino) {
-        return new RotaAdapter().transformarRotas(ClientGoogleMaps.obterRespostaRota(
+        return rotaAdapter.transformarRotas(ClientGoogleMaps.obterRespostaRota(
                 localidadeOrigem, localidadeDestino, TravelMode.DRIVING
         )).block();
     }

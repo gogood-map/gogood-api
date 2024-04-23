@@ -7,11 +7,14 @@ import gogood.gogoodapi.services.ClientGoogleMaps;
 import gogood.gogoodapi.strategy.RotaStrategy;
 
 import java.util.List;
-
 public class APeStrategy implements RotaStrategy {
+    RotaAdapter rotaAdapter;
+    public APeStrategy(RotaAdapter rotaAdapter) {
+        this.rotaAdapter = rotaAdapter;
+    }
     @Override
     public List<Rota> montarRota(String localidadeOrigem, String localidadeDestino) {
-        return new RotaAdapter().transformarRotas(ClientGoogleMaps.obterRespostaRota(
+        return rotaAdapter.transformarRotas(ClientGoogleMaps.obterRespostaRota(
                 localidadeOrigem, localidadeDestino, TravelMode.WALKING
         )).block();
     }

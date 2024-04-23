@@ -18,7 +18,7 @@ public final class R2dbcConfig extends AbstractR2dbcConfiguration {
         return ConnectionFactories.get(ConnectionFactoryOptions.builder()
                 .option(DRIVER, "r2dbc-mysql")
                 .option(PROTOCOL, "mysql")
-                .option(HOST, "52.226.122.160")
+                .option(HOST, "191.239.123.2")
                 .option(PORT, 3306)
                 .option(USER, "root")
                 .option(PASSWORD, "Root@123")

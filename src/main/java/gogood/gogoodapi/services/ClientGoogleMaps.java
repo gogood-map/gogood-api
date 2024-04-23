@@ -1,15 +1,11 @@
 package gogood.gogoodapi.services;
 
-import com.google.maps.*;
-import com.google.maps.errors.ApiException;
-import com.google.maps.model.*;
-import gogood.gogoodapi.models.Coordenada;
-import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
-import org.springframework.web.client.RestClient;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+import com.google.maps.DirectionsApi;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.TravelMode;
+import com.google.maps.model.Unit;
 
 public class ClientGoogleMaps {
     public static GeoApiContext gerarContextoClient(){

@@ -5,6 +5,7 @@ import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
 import gogood.gogoodapi.enums.GeneroEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,12 +13,11 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 
 public class Usuario {
-    private UUID ID;
+    private Integer ID;
     private String nome;
     private String email;
     private String senha;
@@ -26,18 +26,17 @@ public class Usuario {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "America/Sao_Paulo")
     private Date created_at;
     @Enumerated(EnumType.STRING)
-    private GeneroEnum genero;
-    private String orientacao_sexual;
+    private String genero;
+    private String google_id;
 
 
-    public Usuario(String nome, String email, String senha, GeneroEnum genero, Date dt_Nascimento, String orientacao_sexual) {
-        this.ID = UUID.randomUUID();
+    public Usuario(String nome, String email, String senha, String genero, Date dt_Nascimento, String google_id) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.genero = genero;
         this.dt_nascimento = dt_Nascimento;
-        this.orientacao_sexual = orientacao_sexual;
+        this.google_id = google_id;
         this.created_at = new Date();
     }
 

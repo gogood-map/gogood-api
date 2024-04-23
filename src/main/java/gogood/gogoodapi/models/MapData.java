@@ -12,4 +12,7 @@ public class MapData implements Serializable {
     private Double latitude;
     private Double longitude;
 
+    public MapData() {
+    }
+
 }

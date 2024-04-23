@@ -11,23 +11,20 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://104.41.27.114:3306/GoGood
+    url: jdbc:mysql://191.234.214.229:3306/GoGood
     username: root
     password: Root@123
   r2dbc:
-    url: r2dbc:mysql://104.41.27.114:3306/GoGood
+    url: r2dbc:mysql://191.234.214.229:3306/GoGood
     username: root
     password: Root@123
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://52.226.122.160:3306/GoGood
-#    username: root
-#    password: Root@123
 
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+
   cache:
     type: redis
   jackson:
@@ -36,11 +33,9 @@ spring:
   data:
     redis:
       port: 6379
-      host: 104.41.27.114
+      host: 191.234.214.229
       lettuce:
         pool:
           max-active: 20
           max-idle: 10
           min-idle: 5
-    mongodb:
-      uri: mongodb://gogood:gogood24@104.41.27.114:27017/admin

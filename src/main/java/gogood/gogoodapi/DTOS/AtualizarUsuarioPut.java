@@ -14,7 +14,7 @@ public record AtualizarUsuarioPut(
         String email,
         @Size(min = 6, max = 16)
         String senha,
-        GeneroEnum genero,
+        String genero,
         @Past
         Date dt_Nascimento
 ) {

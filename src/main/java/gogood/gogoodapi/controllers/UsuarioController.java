@@ -5,14 +5,11 @@ import gogood.gogoodapi.DTOS.CriarUsuario;
 import gogood.gogoodapi.adapters.UsuarioAdapter;
 import gogood.gogoodapi.models.Usuario;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.yaml.snakeyaml.parser.ParserException;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 

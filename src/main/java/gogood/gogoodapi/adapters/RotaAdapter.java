@@ -2,14 +2,13 @@ package gogood.gogoodapi.adapters;
 
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
-import com.google.maps.model.LatLng;
-import com.mapbox.geojson.Point;
-import com.mapbox.geojson.utils.PolylineUtils;
-import gogood.gogoodapi.models.Coordenada;
-import gogood.gogoodapi.models.Etapa;
 import gogood.gogoodapi.models.Rota;
-import gogood.gogoodapi.services.AzureMapsService;
-import gogood.gogoodapi.services.MongoService;
+import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
+import gogood.gogoodapi.services.GeocodingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.text.SimpleDateFormat;
@@ -18,8 +17,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+@Service
 public class RotaAdapter{
+    @Autowired
+    GeocodingService geocodingService;
+
+    @Autowired
+    OcorrenciasRuasRepository repository;
+
+    public RotaAdapter(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
+        this.geocodingService = geocodingService;
+        this.repository = repository;
+
+    }
+
     public Mono<List<Rota>> transformarRotas(DirectionsResult result){
 
 
@@ -35,7 +46,8 @@ public class RotaAdapter{
 
             Rota rotaAtual = rotas.get(i);
             rotaAtual.setPolyline(resultadoGoogle.overviewPolyline.getEncodedPath());
-            definirCeps(rotaAtual);
+
+            definirLogradouros(rotaAtual);
             definirFlag(rotaAtual);
         }
 
@@ -79,44 +91,24 @@ public class RotaAdapter{
 
     }
 
-    private void definirCeps(Rota rota){
-
-        String itensRequest = "{\"query\": \"?query=%s,%s\"}";
-        StringBuilder corpoRequisicao = new StringBuilder();
-
-        List<Etapa> etapas = rota.getEtapas();
-        int qtdTotalCoordenadas = etapas.size();
-
-        List<Point> coordenadas = new ArrayList<>();
-
-
-        for (int i = 0; i < qtdTotalCoordenadas; i++) {
-
-            Coordenada coordenadaInicialEtapa = etapas.get(i).getCoordenadaInicial();
-            Coordenada coordenadaFinalEtapa = etapas.get(i).getCoordenadaFinal();
-
-            Double latInicial = coordenadaInicialEtapa.getLat();
-            Double lngInicial = coordenadaInicialEtapa.getLng();
-
-            Double latFinal = coordenadaFinalEtapa.getLat();
-            Double lngFinal =  coordenadaFinalEtapa.getLng();
-
-
-            corpoRequisicao.append(
-                    itensRequest.formatted(latFinal, lngFinal)
-            );
-            if(i<qtdTotalCoordenadas-1) corpoRequisicao.append(",");
-        }
-        List<String> ceps = new AzureMapsService().buscarCeps(corpoRequisicao.toString()).block();
-
-        rota.setCeps(ceps);
-
-
+    private void definirLogradouros(Rota rota){
+        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas()).block();
+        rota.setLogradouros(logradouros);
     }
 
-    public static void definirFlag(Rota rota){
-        MongoService mongoService = new MongoService();
-        int quantidadeTotalOcorrencias = mongoService.obterQuantidadeDeOcorrenciasTotais(rota.getCeps()).block();
-        rota.setQtdOcorrenciasTotais(quantidadeTotalOcorrencias);
+    public void definirFlag(Rota rota){
+        Integer qtdOcorrencias = 0;
+        var consultaTudo = repository.findAll();
+        for (String rua: rota.getLogradouros()){
+
+             var consulta = repository.findById(rua);
+
+
+
+            if(consulta.isPresent()){
+                 qtdOcorrencias+=consulta.get().getCount();
+             }
+        }
+        rota.setQtdOcorrenciasTotais(qtdOcorrencias);
     }
 }

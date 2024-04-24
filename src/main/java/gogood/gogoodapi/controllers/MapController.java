@@ -75,6 +75,7 @@ public class MapController {
     public void salvarPartesNoRedis() {
         for (MapList item : partes) {
             String chave = "parte:" + item.getId();
+
             redisTemplate.opsForValue().set(chave, item);
         }
         partes.clear();

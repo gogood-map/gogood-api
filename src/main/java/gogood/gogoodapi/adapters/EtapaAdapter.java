@@ -1,18 +1,12 @@
 package gogood.gogoodapi.adapters;
 
-import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsStep;
 import gogood.gogoodapi.models.Coordenada;
 import gogood.gogoodapi.models.Etapa;
-import gogood.gogoodapi.services.ClientGoogleMaps;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
 public class EtapaAdapter {
-
     public static List<Etapa> tranformarEtapas(DirectionsStep[] steps){
             List<Etapa> etapas = new ArrayList<>();
 

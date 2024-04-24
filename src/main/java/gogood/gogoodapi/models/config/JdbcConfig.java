@@ -1,7 +1,8 @@
 package gogood.gogoodapi.models.config;
+
 import lombok.Getter;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @Getter
 public class JdbcConfig {

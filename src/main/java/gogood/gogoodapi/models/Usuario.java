@@ -1,8 +1,8 @@
 package gogood.gogoodapi.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import gogood.gogoodapi.enums.GeneroEnum;
 import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.enums.GeneroEnum;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.Data;

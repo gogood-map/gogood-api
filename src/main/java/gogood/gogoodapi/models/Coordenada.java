@@ -1,13 +1,17 @@
 package gogood.gogoodapi.models;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@RequiredArgsConstructor
+
 public class Coordenada {
-    private Double lat;
-    private Double lng;
+   final private Double lat;
+   final private Double lng;
+
+    @Override
+    public String toString() {
+        return "Coordenada:{%s,%s}".formatted(lat.toString(), lng.toString());
+    }
 }

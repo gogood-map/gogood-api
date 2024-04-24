@@ -6,6 +6,8 @@ import gogood.gogoodapi.models.Rota;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.services.GeocodingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -22,6 +24,7 @@ public class RotaAdapter{
 
     @Autowired
     OcorrenciasRuasRepository repository;
+
     public RotaAdapter(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
         this.geocodingService = geocodingService;
         this.repository = repository;
@@ -95,10 +98,14 @@ public class RotaAdapter{
 
     public void definirFlag(Rota rota){
         Integer qtdOcorrencias = 0;
+        var consultaTudo = repository.findAll();
         for (String rua: rota.getLogradouros()){
 
              var consulta = repository.findById(rua);
-             if(consulta.isPresent()){
+
+
+
+            if(consulta.isPresent()){
                  qtdOcorrencias+=consulta.get().getCount();
              }
         }

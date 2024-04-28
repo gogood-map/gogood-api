@@ -11,7 +11,7 @@ public class JdbcConfig {
     public JdbcConfig() {
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://191.239.123.2:3306/GoGood");
+        dataSource.setUrl("jdbc:mysql://gogood.brazilsouth.cloudapp.azure.com:3306/GoGood");
         dataSource.setUsername("root");
         dataSource.setPassword("Root@123");
         conexaoDoBanco = new JdbcTemplate(dataSource);

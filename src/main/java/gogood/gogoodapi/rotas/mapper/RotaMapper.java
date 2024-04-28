@@ -40,10 +40,9 @@ public class RotaMapper {
 
             rotas.add(transformarRota(resultadoRotaGoogleRota));
 
-
-
             Rota rotaAtual = rotas.get(i);
             rotaAtual.setPolyline(resultadoGoogle.overviewPolyline.getEncodedPath());
+
 
             definirLogradouros(rotaAtual);
             definirFlag(rotaAtual);
@@ -93,7 +92,6 @@ public class RotaMapper {
 
     public void definirFlag(Rota rota){
         Integer qtdOcorrencias = 0;
-        var consultaTudo = repository.findAll();
         for (String rua: rota.getLogradouros()){
 
              var consulta = repository.findById(rua);

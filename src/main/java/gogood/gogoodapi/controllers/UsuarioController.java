@@ -2,7 +2,7 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
 import gogood.gogoodapi.DTOS.CriarUsuario;
-import gogood.gogoodapi.adapters.UsuarioAdapter;
+import gogood.gogoodapi.mappers.UsuarioAdapter;
 import gogood.gogoodapi.models.Usuario;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatusCode;

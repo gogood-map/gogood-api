@@ -1,13 +1,11 @@
-package gogood.gogoodapi.adapters;
+package gogood.gogoodapi.rotas.mapper;
 
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
-import gogood.gogoodapi.models.Rota;
-import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
-import gogood.gogoodapi.services.GeocodingService;
+import gogood.gogoodapi.rotas.models.Rota;
+import gogood.gogoodapi.rotas.repository.OcorrenciasRuasRepository;
+import gogood.gogoodapi.rotas.services.GeocodingService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -18,20 +16,20 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 @Service
-public class RotaAdapter{
+public class RotaMapper {
     @Autowired
     GeocodingService geocodingService;
 
     @Autowired
     OcorrenciasRuasRepository repository;
 
-    public RotaAdapter(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
+    public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
         this.geocodingService = geocodingService;
         this.repository = repository;
 
     }
 
-    public Mono<List<Rota>> transformarRotas(DirectionsResult result){
+    public Mono<List<Rota>> toRota(DirectionsResult result){
 
 
         List<Rota> rotas = new ArrayList<>();
@@ -67,7 +65,7 @@ public class RotaAdapter{
         Rota rota = new Rota();
         rota.setDestino(directionsLeg.endAddress);
         rota.setOrigem(directionsLeg.startAddress);
-        rota.setEtapas(EtapaAdapter.tranformarEtapas(directionsLeg.steps));
+        rota.setEtapas(EtapaMapper.toEtapa(directionsLeg.steps));
         rota.setDuracao(directionsLeg.duration.humanReadable);
 
 
@@ -86,9 +84,6 @@ public class RotaAdapter{
         rota.setDistancia((double) directionsLeg.distance.inMeters /1000);
 
         return rota;
-    }
-    private void definirQuantidadeOcorrencias(){
-
     }
 
     private void definirLogradouros(Rota rota){

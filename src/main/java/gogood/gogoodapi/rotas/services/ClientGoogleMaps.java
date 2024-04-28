@@ -1,4 +1,4 @@
-package gogood.gogoodapi.services;
+package gogood.gogoodapi.rotas.services;
 
 import com.google.maps.DirectionsApi;
 import com.google.maps.DirectionsApiRequest;
@@ -17,7 +17,6 @@ public class ClientGoogleMaps {
     public static DirectionsApiRequest gerarRequestRota(){
         DirectionsApiRequest request = DirectionsApi.newRequest(gerarContextoClient());
         request.alternatives(true);
-        request.optimizeWaypoints(true);
         request.units(Unit.METRIC);
         request.region("br");
         request.language("pt-BR");

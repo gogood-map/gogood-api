@@ -1,13 +1,13 @@
-package gogood.gogoodapi.adapters;
+package gogood.gogoodapi.rotas.mapper;
 
 import com.google.maps.model.DirectionsStep;
-import gogood.gogoodapi.models.Coordenada;
-import gogood.gogoodapi.models.Etapa;
+import gogood.gogoodapi.rotas.models.Coordenada;
+import gogood.gogoodapi.rotas.models.Etapa;
 
 import java.util.ArrayList;
 import java.util.List;
-public class EtapaAdapter {
-    public static List<Etapa> tranformarEtapas(DirectionsStep[] steps){
+public class EtapaMapper {
+    public static List<Etapa> toEtapa(DirectionsStep[] steps){
             List<Etapa> etapas = new ArrayList<>();
 
             for (DirectionsStep etapaFor:steps){
@@ -21,7 +21,7 @@ public class EtapaAdapter {
                 if(subEtapas != null){
                     List<Etapa> subEtapasConvertidas = new ArrayList<>();
                     for (int i = 0; i < subEtapas.length; i++) {
-                        subEtapasConvertidas = tranformarEtapas(subEtapas);
+                        subEtapasConvertidas = toEtapa(subEtapas);
                     }
 
                     etapa.setSubEtapas(subEtapasConvertidas);

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.models;
+package gogood.gogoodapi.rotas.models;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

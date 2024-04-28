@@ -1,4 +1,4 @@
-package gogood.gogoodapi.adapters;
+package gogood.gogoodapi.mappers;
 
 import gogood.gogoodapi.DTOS.CriarUsuario;
 import gogood.gogoodapi.models.Usuario;

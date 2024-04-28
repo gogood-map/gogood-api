@@ -1,7 +1,7 @@
 package gogood.gogoodapi.utils;
 
 import gogood.gogoodapi.models.ListaObj;
-import gogood.gogoodapi.models.Rota;
+import gogood.gogoodapi.rotas.models.Rota;
 
 import java.util.ArrayList;
 import java.util.Arrays;

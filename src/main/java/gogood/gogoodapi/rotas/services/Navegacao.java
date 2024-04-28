@@ -1,7 +1,7 @@
-package gogood.gogoodapi.services;
+package gogood.gogoodapi.rotas.services;
 
-import gogood.gogoodapi.models.Rota;
-import gogood.gogoodapi.strategy.RotaStrategy;
+import gogood.gogoodapi.rotas.models.Rota;
+import gogood.gogoodapi.rotas.strategy.RotaStrategy;
 import gogood.gogoodapi.utils.Ordenacao;
 
 import java.util.List;

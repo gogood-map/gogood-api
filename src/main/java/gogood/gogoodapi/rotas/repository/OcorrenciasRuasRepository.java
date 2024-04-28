@@ -1,6 +1,6 @@
-package gogood.gogoodapi.repository;
+package gogood.gogoodapi.rotas.repository;
 
-import gogood.gogoodapi.models.QuantidadeOcorrenciaPorCep;
+import gogood.gogoodapi.rotas.models.QuantidadeOcorrenciaPorCep;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

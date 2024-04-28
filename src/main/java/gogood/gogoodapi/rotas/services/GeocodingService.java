@@ -1,7 +1,7 @@
-package gogood.gogoodapi.services;
+package gogood.gogoodapi.rotas.services;
 
-import gogood.gogoodapi.models.Coordenada;
-import gogood.gogoodapi.models.Etapa;
+import gogood.gogoodapi.rotas.models.Coordenada;
+import gogood.gogoodapi.rotas.models.Etapa;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;

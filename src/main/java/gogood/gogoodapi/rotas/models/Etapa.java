@@ -1,4 +1,4 @@
-package gogood.gogoodapi.models;
+package gogood.gogoodapi.rotas.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

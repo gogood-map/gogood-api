@@ -14,11 +14,6 @@ spring:
     url: jdbc:mysql://gogood.brazilsouth.cloudapp.azure.com:3306/GoGood
     username: root
     password: Root@123
-  r2dbc:
-    url: r2dbc:mysql://gogood.brazilsouth.cloudapp.azure.com:3306/GoGood
-    username: root
-    password: Root@123
-
   jpa:
     properties:
       hibernate:

@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class GeocodingService {
@@ -21,7 +22,7 @@ public class GeocodingService {
         this.redisTemplate = redisTemplate;
     }
 
-    public Mono<List<String>> buscarLogradouros(List<Etapa> etapas){
+    public List<String> buscarLogradouros(List<Etapa> etapas){
 
         RestClient restClient = RestClient.create();
         List<String> logradouros = new ArrayList<>();
@@ -42,12 +43,19 @@ public class GeocodingService {
                 try{
                     var rua = jo.getJSONObject("address").getString("road");
                     redisTemplate.opsForValue().set(coordenada.toString(), rua);
+                    setKeyWithExpire(coordenada.toString(), rua, 30, TimeUnit.MINUTES);
+                    logradouros.add(rua);
                 }catch (Exception ignored){
                 }
             }
         }
 
 
-        return Mono.just(logradouros.stream().distinct().toList());
+        return logradouros.stream().distinct().toList();
+    }
+
+    public void setKeyWithExpire(String key, String value, long timeout, TimeUnit timeUnit) {
+        redisTemplate.opsForValue().set(key, value);
+        redisTemplate.expire(key, timeout, timeUnit);
     }
 }

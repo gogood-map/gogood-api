@@ -29,7 +29,7 @@ public class RotaMapper {
 
     }
 
-    public Mono<List<Rota>> toRota(DirectionsResult result){
+    public List<Rota> toRota(DirectionsResult result){
 
 
         List<Rota> rotas = new ArrayList<>();
@@ -48,7 +48,7 @@ public class RotaMapper {
             definirFlag(rotaAtual);
         }
 
-        return Mono.just(rotas);
+        return rotas;
     }
 
     private Rota transformarRota(DirectionsLeg directionsLeg){
@@ -86,7 +86,7 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota){
-        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas()).block();
+        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas());
         rota.setLogradouros(logradouros);
     }
 

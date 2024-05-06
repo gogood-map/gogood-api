@@ -4,6 +4,7 @@ import com.google.maps.*;
 import com.google.maps.errors.ApiException;
 import com.google.maps.model.*;
 import gogood.gogoodapi.models.Coordenada;
+import org.hibernate.cfg.Environment;
 import org.springframework.boot.autoconfigure.elasticsearch.ElasticsearchProperties;
 import org.springframework.web.client.RestClient;
 
@@ -12,9 +13,10 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ClientGoogleMaps {
+
     public static GeoApiContext gerarContextoClient(){
         return new GeoApiContext.Builder()
-                .apiKey("AIzaSyA9cd3e1BftlFXFnei_GU-mMQrm8WgH_ko")
+                .apiKey(System.getenv("GOOGLE_API_KEY"))
                 .build();
     }
     //Rotas

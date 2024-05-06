@@ -11,13 +11,13 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://191.234.214.229:3306/GoGood
-    username: root
-    password: Root@123
+    url: ${JDBC_URL}
+    username: ${JDBC_USERNAME}
+    password: ${JDBC_PASSWORD}
   r2dbc:
-    url: r2dbc:mysql://191.234.214.229:3306/GoGood
-    username: root
-    password: Root@123
+    url: ${R2DBC_URL}
+    username: ${R2DBC_USERNAME}
+    password: ${R2DBC_PASSWORD}
 
   jpa:
     properties:
@@ -32,8 +32,8 @@ spring:
       write-date-keys-as-timestamps: true
   data:
     redis:
-      port: 6379
-      host: 191.234.214.229
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
       lettuce:
         pool:
           max-active: 20

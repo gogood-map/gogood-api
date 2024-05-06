@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,13 +32,18 @@ public class MapController {
     private ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
 
-
 //    @GetMapping
 //    public Mono<ResponseEntity<String>> get() {
 //        return getDadosOcorrencia()
 //                .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")))
 //                .onErrorResume(e -> Mono.just(ResponseEntity.status(500).body("Erro ao processar a requisição: " + e.getMessage())));
 //    }
+
+    @GetMapping
+    public ResponseEntity<String> resultado() {
+        ResponseEntity<String> response = getDadosOcorrencia();
+        return response;
+    }
 
 
     //    @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
@@ -46,16 +53,26 @@ public class MapController {
     }
 
 
-//    public Mono<Void> getDadosOcorrencia() {
-//        String query = "SELECT * FROM ocorrencias";
-//        JdbcConfig jdbcConfig = new JdbcConfig();
-//        return jdbcConfig.getConexaoDoBanco().execute(query)
-//                .fetch()
-//                .all()
-//                .collectList()
-//                .doOnNext(this::salvarListaPorPartes)
-//                .then();
-//    }
+    public ResponseEntity<String> getDadosOcorrencia() {
+        JdbcConfig jdbcConfig = new JdbcConfig();
+        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
+                SELECT * FROM ocorrencias
+                 """, new BeanPropertyRowMapper<>(MapData.class));
+
+        MapList mapList = new MapList();
+        List<Map<String, Object>> mapData = new ArrayList<>();
+
+        for (MapData mapa : resultado) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("longitude", mapa.getLongitude());
+            map.put("latitude", mapa.getLatitude());
+            map.put("id", mapa.getId());
+            mapData.add(map);
+        }
+
+        salvarListaPorPartes(mapData);
+        return ResponseEntity.ok().body("Ok");
+    }
 
     public void salvarListaPorPartes(List<Map<String, Object>> mapData) {
         int totalPartes = (mapData.size() + 9999) / 10000;

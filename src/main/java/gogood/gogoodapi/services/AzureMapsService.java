@@ -15,7 +15,7 @@ public class AzureMapsService{
     public Mono<List<String>> buscarCeps(String batchRequest){
         RestClient clienteRest = RestClient.create();
         var requisicao = clienteRest.post().uri(
-                "https://atlas.microsoft.com/search/address/reverse/batch/sync/json?api-version=1.0&subscription-key=Tgehvd0GXs7mbEi3hb7ovpoNrfEtTkvlQMA8ANL-1zs"
+                "https://atlas.microsoft.com/search/address/reverse/batch/sync/json?api-version=1.0&subscription-key=2ngW06TI3ibt6VnCx7-e0z8V5sM0iTmocuLMHNfh3A4"
         ).contentType(APPLICATION_JSON).body(
                 """
                 {

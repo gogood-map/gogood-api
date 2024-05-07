@@ -1,18 +1,17 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.DTOS.AtualizarUsuarioPut;
-import gogood.gogoodapi.DTOS.CriarUsuario;
-import gogood.gogoodapi.adapters.UsuarioAdapter;
-import gogood.gogoodapi.models.Usuario;
+import gogood.gogoodapi.domain.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.domain.DTOS.CriarUsuario;
+import gogood.gogoodapi.domain.mappers.UsuarioAdapter;
+import gogood.gogoodapi.domain.models.Usuario;
+import gogood.gogoodapi.repository.UsuarioRepository;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.yaml.snakeyaml.parser.ParserException;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,8 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
     private ArrayList<Usuario> usuarios = new ArrayList<>();
-
+    @Autowired
+    UsuarioRepository repository;
     @GetMapping
     public ResponseEntity<List<Usuario>> getAll(){
         if(usuarios.isEmpty()){

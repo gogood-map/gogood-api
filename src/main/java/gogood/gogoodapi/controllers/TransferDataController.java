@@ -1,11 +1,8 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.models.Usuario;
-import gogood.gogoodapi.models.config.JdbcConfig;
-import gogood.gogoodapi.models.redis.config.GenericConverter;
-import gogood.gogoodapi.repository.UsuarioRepository;
+import gogood.gogoodapi.domain.models.Usuario;
+import gogood.gogoodapi.configuration.JdbcConfig;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/transfer")

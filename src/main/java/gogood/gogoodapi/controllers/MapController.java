@@ -1,8 +1,8 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.models.MapData;
-import gogood.gogoodapi.models.MapList;
-import gogood.gogoodapi.models.config.JdbcConfig;
+import gogood.gogoodapi.domain.models.MapData;
+import gogood.gogoodapi.domain.models.MapList;
+import gogood.gogoodapi.configuration.JdbcConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -92,6 +92,7 @@ public class MapController {
     public void salvarPartesNoRedis() {
         for (MapList item : partes) {
             String chave = "parte:" + item.getId();
+
             redisTemplate.opsForValue().set(chave, item);
         }
         partes.clear();

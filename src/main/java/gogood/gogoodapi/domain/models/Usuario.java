@@ -1,9 +1,8 @@
 package gogood.gogoodapi.domain.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import gogood.gogoodapi.domain.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.domain.dtos.AtualizarUsuarioPut;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

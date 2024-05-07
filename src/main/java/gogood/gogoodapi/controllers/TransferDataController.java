@@ -2,6 +2,7 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.models.Usuario;
 import gogood.gogoodapi.configuration.JdbcConfig;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,6 +26,7 @@ public class TransferDataController {
 
     JdbcConfig jdbcConfig = new JdbcConfig();
 
+    @Operation(summary = "Download de dados de usuários em formato CSV", description = "Exporta os dados de usuários do banco de dados em um arquivo CSV")
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Void> downloadData(HttpServletResponse response) throws IOException {
         List<Usuario> allData = jdbcConfig.getConexaoDoBanco().query(
@@ -57,6 +59,7 @@ public class TransferDataController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Upload de dados de usuários em formato CSV", description = "Importa os dados de usuários de um arquivo CSV para o banco de dados")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String uploadData(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {

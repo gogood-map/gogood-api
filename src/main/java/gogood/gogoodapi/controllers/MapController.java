@@ -3,6 +3,7 @@ package gogood.gogoodapi.controllers;
 import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.MapList;
 import gogood.gogoodapi.configuration.JdbcConfig;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -27,10 +28,9 @@ public class MapController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Autowired
-    private ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
 
+    @Operation(summary = "Obter dados de ocorrências", description = "Obtém os dados de ocorrências do banco de dados")
     @GetMapping
     public ResponseEntity<String> get() {
         ResponseEntity<String> response = getDadosOcorrencia();
@@ -38,7 +38,7 @@ public class MapController {
     }
 
 
-    //    @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
+    @Operation(summary = "Obter dados de ocorrências por localização", description = "Obtém os dados de ocorrências do banco de dados por localização")
     @GetMapping("/local/{latitude}/{longitude}")
     public MapList getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
         return getAndSaveByLocation(latitude, longitude);
@@ -51,7 +51,6 @@ public class MapController {
                 SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
 
-        MapList mapList = new MapList();
         List<Map<String, Object>> mapData = new ArrayList<>();
 
         for (MapData mapa : resultado) {

@@ -11,8 +11,4 @@ public class MapData implements Serializable {
     private String id;
     private Double latitude;
     private Double longitude;
-
-    public MapData() {
-    }
-
 }

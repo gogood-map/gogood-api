@@ -1,10 +1,11 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.domain.DTOS.AtualizarUsuarioPut;
-import gogood.gogoodapi.domain.DTOS.CriarUsuario;
+import gogood.gogoodapi.domain.dtos.AtualizarUsuarioPut;
+import gogood.gogoodapi.domain.dtos.CriarUsuario;
 import gogood.gogoodapi.domain.mappers.UsuarioAdapter;
 import gogood.gogoodapi.domain.models.Usuario;
 import gogood.gogoodapi.repository.UsuarioRepository;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -21,6 +22,8 @@ public class UsuarioController {
     private ArrayList<Usuario> usuarios = new ArrayList<>();
     @Autowired
     UsuarioRepository repository;
+
+    @Operation(summary = "Obter todos os usuários", description = "Retorna uma lista com todos os usuários cadastrados")
     @GetMapping
     public ResponseEntity<List<Usuario>> getAll(){
         if(usuarios.isEmpty()){
@@ -29,6 +32,8 @@ public class UsuarioController {
         return ResponseEntity.status(200).body(usuarios);
     }
 
+
+    @Operation(summary = "Obter usuário por ID", description = "Retorna um usuário específico")
     @PostMapping
     public ResponseEntity<Usuario> cadastrar(@RequestBody @Valid CriarUsuario novoUsuario)  {
             Usuario usuario = UsuarioAdapter.novoUsuarioParaUsuario(novoUsuario);
@@ -36,6 +41,7 @@ public class UsuarioController {
             return ResponseEntity.status(201).build();
     }
 
+    @Operation(summary = "Remover usuário por ID", description = "Remove um usuário específico")
     @DeleteMapping("/{id}")
     public ResponseEntity<Usuario> excluir(@PathVariable String id){
         validaId(id);
@@ -47,6 +53,7 @@ public class UsuarioController {
         return ResponseEntity.status(204).build();
     }
 
+    @Operation(summary = "Atualizar usuário por ID", description = "Atualiza um usuário específico")
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> atualizar(@PathVariable String id, @Valid @RequestBody AtualizarUsuarioPut dadosAtualizacao){
         validaId(id);

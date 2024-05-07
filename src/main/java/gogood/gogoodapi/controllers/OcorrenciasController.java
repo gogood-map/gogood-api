@@ -1,10 +1,11 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
+import gogood.gogoodapi.domain.dtos.OcorrenciaRuaSimples;
 import gogood.gogoodapi.domain.mappers.OcorrenciaRuaMapper;
 import gogood.gogoodapi.domain.models.OcorrenciaRua;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.utils.PesquisaBinaria;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
@@ -21,6 +22,7 @@ public class OcorrenciasController {
     @Autowired
     OcorrenciasRuasRepository ocorrenciasRuasRepository;
 
+    @Operation(summary = "Buscar quantidade de ocorrências por rua", description = "Retorna a quantidade de ocorrências por rua")
     @GetMapping("/filtro")
     public ResponseEntity<OcorrenciaRuaSimples> buscarQuantidadeOcorrenciasPorRua(@RequestParam String rua){
         var consulta = ocorrenciasRuasRepository.findAll(Sort.by(Sort.Direction.ASC, "_id"));

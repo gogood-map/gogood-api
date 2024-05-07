@@ -1,6 +1,6 @@
 package gogood.gogoodapi.domain.mappers;
 
-import gogood.gogoodapi.domain.dtos.CriarUsuario;
+import gogood.gogoodapi.domain.DTOS.CriarUsuario;
 import gogood.gogoodapi.domain.models.Usuario;
 
 public class UsuarioAdapter {

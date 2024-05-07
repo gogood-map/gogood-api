@@ -1,6 +1,6 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.domain.dtos.OcorrenciaRuaSimples;
+import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
 import gogood.gogoodapi.domain.mappers.OcorrenciaRuaMapper;
 import gogood.gogoodapi.domain.models.OcorrenciaRua;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;

@@ -1,7 +1,7 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.domain.dtos.AtualizarUsuarioPut;
-import gogood.gogoodapi.domain.dtos.CriarUsuario;
+import gogood.gogoodapi.domain.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.domain.DTOS.CriarUsuario;
 import gogood.gogoodapi.domain.mappers.UsuarioAdapter;
 import gogood.gogoodapi.domain.models.Usuario;
 import gogood.gogoodapi.repository.UsuarioRepository;

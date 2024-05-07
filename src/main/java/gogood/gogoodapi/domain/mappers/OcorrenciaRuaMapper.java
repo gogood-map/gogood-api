@@ -1,5 +1,5 @@
 package gogood.gogoodapi.domain.mappers;
-import gogood.gogoodapi.domain.dtos.OcorrenciaRuaSimples;
+import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
 import gogood.gogoodapi.domain.models.OcorrenciaRua;
 
 import java.util.List;

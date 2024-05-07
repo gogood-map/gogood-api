@@ -73,4 +73,4 @@ jobs:
         port: ${{ secrets.AZURE_VM_PORT }}
         script: |
           sudo mv /home/gogood/java-app/target/*.jar /home/gogood/gogood-jar
-          java -jar gogood-api-0.0.1-SNAPSHOT.jar
+          sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar

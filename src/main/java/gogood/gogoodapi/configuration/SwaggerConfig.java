@@ -1,5 +1,6 @@
 package gogood.gogoodapi.configuration;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
@@ -14,6 +15,6 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI(){
         Server server = new Server();
         server.setUrl("https://gogood.brazilsouth.cloudapp.azure.com");
-        return new OpenAPI().servers(List.of(server));
+        return new OpenAPI().servers(List.of(server)).info(new Info().title("GoGood API").version("1.0"));
     }
 }

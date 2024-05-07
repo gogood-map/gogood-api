@@ -6,6 +6,7 @@ import gogood.gogoodapi.domain.models.OcorrenciaRua;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.utils.PesquisaBinaria;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
@@ -18,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/ocorrencias")
+@Tag(name = "Ocorrências", description = "Consultar dados de ocorrências")
 public class OcorrenciasController {
     @Autowired
     OcorrenciasRuasRepository ocorrenciasRuasRepository;

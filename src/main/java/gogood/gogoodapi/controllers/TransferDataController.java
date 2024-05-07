@@ -3,6 +3,7 @@ package gogood.gogoodapi.controllers;
 import gogood.gogoodapi.domain.models.Usuarios;
 import gogood.gogoodapi.configuration.JdbcConfig;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/transfer")
+@Tag(name = "Transferência de Dados", description = "Transferir dados de usuários")
 public class TransferDataController {
 
     JdbcConfig jdbcConfig = new JdbcConfig();

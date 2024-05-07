@@ -4,6 +4,7 @@ import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.MapList;
 import gogood.gogoodapi.configuration.JdbcConfig;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -21,6 +22,8 @@ import java.util.Map;
 @EnableCaching
 @CrossOrigin(origins = "https://gogood.azurewebsites.net")
 @RequestMapping("/consultar")
+@Tag(name = "Mapa", description = "Consultar dados de ocorrências")
+
 public class MapController {
     public final List<MapList> partes = new ArrayList<>();
 

@@ -20,6 +20,6 @@ public class TransportePublicoStrategy implements RotaStrategy {
     public List<Rota> montarRota(String localidadeOrigem, String localidadeDestino) {
         return rotaMapper.toRota(ClientGoogleMaps.obterRespostaRota(
                 localidadeOrigem, localidadeDestino, TravelMode.TRANSIT
-        )).block();
+        ));
     }
 }

@@ -16,6 +16,6 @@ public class APeStrategy implements RotaStrategy {
     public List<Rota> montarRota(String localidadeOrigem, String localidadeDestino) {
         return rotaMapper.toRota(ClientGoogleMaps.obterRespostaRota(
                 localidadeOrigem, localidadeDestino, TravelMode.WALKING
-        )).block();
+        ));
     }
 }

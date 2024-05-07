@@ -72,4 +72,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.AZURE_VM_PORT }}
         script: |
-          mv /home/gogood/java-app/*.jar /home/gogood/gogood-jar/
+          mv /home/gogood/java-app/target/*.jar /home/gogood/gogood-jar

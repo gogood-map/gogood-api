@@ -1,0 +1,25 @@
+package gogood.gogoodapi.domain.DTOS;
+
+import jakarta.validation.constraints.*;
+
+import java.util.Date;
+
+public record CriarUsuario(
+        @Size(min = 4, max = 255)
+        @NotBlank
+        String nome,
+        @Email
+        @NotBlank
+        String email,
+        @Size(min = 6, max = 16)
+        @NotBlank
+        String senha,
+        @NotBlank
+        String genero,
+        @Past
+        @NotNull
+        Date dt_Nascimento,
+
+        @NotBlank
+        String google_id){}
+

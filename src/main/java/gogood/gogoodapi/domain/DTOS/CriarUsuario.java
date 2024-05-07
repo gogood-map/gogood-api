@@ -1,9 +1,6 @@
 package gogood.gogoodapi.domain.DTOS;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 import java.util.Date;
 
@@ -20,7 +17,7 @@ public record CriarUsuario(
         @NotBlank
         String genero,
         @Past
-        @NotBlank
+        @NotNull
         Date dt_Nascimento,
 
         @NotBlank

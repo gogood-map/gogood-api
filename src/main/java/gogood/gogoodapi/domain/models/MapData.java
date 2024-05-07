@@ -14,5 +14,4 @@ public class MapData implements Serializable {
 
     public MapData() {
     }
-
 }

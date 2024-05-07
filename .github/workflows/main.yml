@@ -62,9 +62,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.AZURE_VM_PORT }}
           source: "target/*.jar"
-          target: "/home/educai/java-app"
+          target: "/home/gogood/java-app"
 
-    - name: Move Java App to Docker Container
+    - name: Move Java App to File Gogood
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.AZURE_VM_HOST }}

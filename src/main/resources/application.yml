@@ -8,6 +8,7 @@
 #      r2dbc: DEBUG
 #    reactor: DEBUG
 
+
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -33,6 +34,7 @@ spring:
           max-active: 20
           max-idle: 10
           min-idle: 5
+      timeout: 120000
 
     mongodb:
       repositories:

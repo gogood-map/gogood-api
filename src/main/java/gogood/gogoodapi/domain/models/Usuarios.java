@@ -2,8 +2,8 @@ package gogood.gogoodapi.domain.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import gogood.gogoodapi.domain.DTOS.AtualizarUsuarioPut;
+import gogood.gogoodapi.domain.DTOS.CriarUsuario;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +14,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Usuario {
+public class Usuarios {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 
@@ -30,13 +30,23 @@ public class Usuario {
     private String google_id;
 
 
-    public Usuario(String nome, String email, String senha, String genero, Date dt_Nascimento, String google_id) {
+    public Usuarios(String nome, String email, String senha, String genero, Date dt_Nascimento, String google_id) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
         this.genero = genero;
         this.dt_nascimento = dt_Nascimento;
         this.google_id = google_id;
+        this.created_at = new Date();
+    }
+
+    public Usuarios(CriarUsuario novoUsuario) {
+        this.nome = novoUsuario.nome();
+        this.email = novoUsuario.email();
+        this.senha = novoUsuario.senha();
+        this.genero = novoUsuario.genero();
+        this.dt_nascimento = novoUsuario.dt_Nascimento();
+        this.google_id = novoUsuario.google_id();
         this.created_at = new Date();
     }
 

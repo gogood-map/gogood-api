@@ -1,0 +1,1 @@
+org.springframework.boot.env.EnvironmentPostProcessor=gogood.gogoodapi.configuration.DotenvEnvironmentProcessor

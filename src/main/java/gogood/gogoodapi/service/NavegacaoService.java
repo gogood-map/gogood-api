@@ -6,14 +6,14 @@ import gogood.gogoodapi.utils.Ordenacao;
 
 import java.util.List;
 
-public class Navegacao {
+public class NavegacaoService {
 
     private RotaStrategy estrategiaRota;
 
-    public Navegacao(RotaStrategy estrategiaRota) {
+    public NavegacaoService(RotaStrategy estrategiaRota) {
         escolherStrategy(estrategiaRota);
     }
-    public Navegacao() {}
+    public NavegacaoService() {}
 
     public void escolherStrategy(RotaStrategy estrategiaRota){
         this.estrategiaRota = estrategiaRota;

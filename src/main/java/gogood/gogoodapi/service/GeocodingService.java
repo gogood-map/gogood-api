@@ -2,6 +2,7 @@ package gogood.gogoodapi.service;
 
 import gogood.gogoodapi.domain.models.Coordenada;
 import gogood.gogoodapi.domain.models.Etapa;
+import gogood.gogoodapi.utils.RedisTTL;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -17,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 public class GeocodingService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
+
+    private RedisTTL redisTTL;
 
     public GeocodingService(RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -43,7 +46,7 @@ public class GeocodingService {
                 try{
                     var rua = jo.getJSONObject("address").getString("road");
                     redisTemplate.opsForValue().set(coordenada.toString(), rua);
-                    setKeyWithExpire(coordenada.toString(), rua, 30, TimeUnit.MINUTES);
+                    redisTTL.setKeyWithExpire(coordenada.toString(), rua, 30, TimeUnit.MINUTES);
                     logradouros.add(rua);
                 }catch (Exception ignored){
                 }
@@ -54,8 +57,5 @@ public class GeocodingService {
         return logradouros.stream().distinct().toList();
     }
 
-    public void setKeyWithExpire(String key, String value, long timeout, TimeUnit timeUnit) {
-        redisTemplate.opsForValue().set(key, value);
-        redisTemplate.expire(key, timeout, timeUnit);
-    }
+
 }

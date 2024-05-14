@@ -3,8 +3,6 @@ package gogood.gogoodapi.controllers;
 import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.MapList;
 import gogood.gogoodapi.configuration.JdbcConfig;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
@@ -12,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,8 +21,6 @@ import java.util.Map;
 @EnableCaching
 @CrossOrigin(origins = "https://gogood.azurewebsites.net")
 @RequestMapping("/consultar")
-@Tag(name = "Mapa", description = "Consultar dados de ocorrências")
-
 public class MapController {
     public final List<MapList> partes = new ArrayList<>();
 
@@ -31,17 +28,25 @@ public class MapController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @Autowired
+    private ReactiveRedisTemplate<String, Object> reactiveRedisTemplate;
 
 
-    @Operation(summary = "Obter dados de ocorrências", description = "Obtém os dados de ocorrências do banco de dados")
+//    @GetMapping
+//    public Mono<ResponseEntity<String>> get() {
+//        return getDadosOcorrencia()
+//                .then(Mono.just(ResponseEntity.ok().body("Dados salvos com sucesso")))
+//                .onErrorResume(e -> Mono.just(ResponseEntity.status(500).body("Erro ao processar a requisição: " + e.getMessage())));
+//    }
+
     @GetMapping
-    public ResponseEntity<String> get() {
+    public ResponseEntity<String> resultado() {
         ResponseEntity<String> response = getDadosOcorrencia();
         return response;
     }
 
 
-    @Operation(summary = "Obter dados de ocorrências por localização", description = "Obtém os dados de ocorrências do banco de dados por localização")
+    //    @Cacheable(value = "cacheLocalizacao", key = "#latitude.toString().concat('-').concat(#longitude.toString())")
     @GetMapping("/local/{latitude}/{longitude}")
     public MapList getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
         return getAndSaveByLocation(latitude, longitude);
@@ -54,6 +59,7 @@ public class MapController {
                 SELECT * FROM ocorrencias
                  """, new BeanPropertyRowMapper<>(MapData.class));
 
+        MapList mapList = new MapList();
         List<Map<String, Object>> mapData = new ArrayList<>();
 
         for (MapData mapa : resultado) {

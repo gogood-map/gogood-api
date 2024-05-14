@@ -12,9 +12,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://gogood.brazilsouth.cloudapp.azure.com:3306/GoGood
-    username: root
-    password: Root@123
+    url: ${JDBC_URL}
+    username: ${JDBC_USERNAME}
+    password: ${JDBC_PASSWORD}
   jpa:
     properties:
       hibernate:
@@ -27,8 +27,8 @@ spring:
       write-date-keys-as-timestamps: true
   data:
     redis:
-      port: 6379
-      host: gogood.brazilsouth.cloudapp.azure.com
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
       lettuce:
         pool:
           max-active: 20
@@ -39,5 +39,5 @@ spring:
     mongodb:
       repositories:
         type: imperative
-      uri: mongodb://gogood:gogood24@gogood.brazilsouth.cloudapp.azure.com:27017/?authSource=admin
-      database: gogood
+      uri: ${MONGODB_URL}
+      database: ${MONGODB_DATABASE}

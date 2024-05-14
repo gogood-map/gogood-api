@@ -1,5 +1,6 @@
 package gogood.gogoodapi.configuration;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -13,8 +14,9 @@ import java.util.List;
 public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI(){
+        Dotenv dotenv = Dotenv.load();
         Server server = new Server();
-        server.setUrl("https://gogood.brazilsouth.cloudapp.azure.com");
+        server.setUrl(dotenv.get("SWAGGER_URL"));
         return new OpenAPI().servers(List.of(server)).info(new Info().title("GoGood API").version("1.0"));
     }
 }

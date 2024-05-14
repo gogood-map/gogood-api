@@ -1,5 +1,6 @@
 package gogood.gogoodapi.configuration;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,11 +10,12 @@ public class JdbcConfig {
     private JdbcTemplate conexaoDoBanco;
 
     public JdbcConfig() {
+        Dotenv dotenv = Dotenv.load();
         BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
-        dataSource.setUrl("jdbc:mysql://gogood.brazilsouth.cloudapp.azure.com:3306/GoGood");
-        dataSource.setUsername("root");
-        dataSource.setPassword("Root@123");
+        dataSource.setUrl(dotenv.get("JDBC_URL"));
+        dataSource.setUsername(dotenv.get("JDBC_USERNAME"));
+        dataSource.setPassword(dotenv.get("JDBC_PASSWORD"));
         conexaoDoBanco = new JdbcTemplate(dataSource);
     }
 }

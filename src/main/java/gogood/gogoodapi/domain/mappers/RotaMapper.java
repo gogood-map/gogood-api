@@ -3,10 +3,17 @@ package gogood.gogoodapi.domain.mappers;
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
 import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
+import gogood.gogoodapi.domain.enums.TipoTransporteEnum;
 import gogood.gogoodapi.domain.models.Rota;
 import gogood.gogoodapi.domain.models.RotaShareResponse;
+import gogood.gogoodapi.domain.strategy.RotaStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.service.GeocodingService;
+import gogood.gogoodapi.service.NavegacaoService;
 import gogood.gogoodapi.utils.RedisTTL;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +33,11 @@ public class RotaMapper {
     @Autowired
     OcorrenciasRuasRepository repository;
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
-    private RedisTTL redisTTL;
 
-    public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository, RedisTemplate<String, Object> redisTemplate) {
+    public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
         this.geocodingService = geocodingService;
         this.repository = repository;
-        this.redisTemplate = redisTemplate;
     }
 
     public List<Rota> toRota(DirectionsResult result){
@@ -113,19 +116,5 @@ public class RotaMapper {
         rota.setQtdOcorrenciasTotais(qtdOcorrencias);
     }
 
-    public RotaShareResponse compartilharRota(RotaSharePersist rota, HttpServletRequest request)  {
-        String id = UUID.randomUUID().toString();
-        String chave = "rotasCompartilhadas:" + id;
-        redisTemplate.opsForValue().set(chave, rota);
-        redisTTL.setKeyWithExpire(chave, rota, 30, TimeUnit.MINUTES);
 
-        String baseUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
-        Map<String, String> url = new HashMap<>();
-        url.put("url", baseUrl + "/rotas/compartilhar/" + id);
-
-        RotaShareResponse response = new RotaShareResponse();
-        response.setUrl(url);
-
-        return response;
-    }
 }

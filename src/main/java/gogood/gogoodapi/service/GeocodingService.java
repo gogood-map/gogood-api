@@ -4,58 +4,64 @@ import gogood.gogoodapi.domain.models.Coordenada;
 import gogood.gogoodapi.domain.models.Etapa;
 import gogood.gogoodapi.utils.RedisTTL;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
 public class GeocodingService {
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
 
-    private RedisTTL redisTTL;
+    private final WebClient webClient;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final RedisTTL redisTTL;
+    private static final int MAX_CONCURRENT_REQUESTS = 5; // Número máximo de requisições simultâneas
 
-    public GeocodingService(RedisTemplate<String, Object> redisTemplate) {
+    public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
+        this.webClient = webClientBuilder.baseUrl("https://nominatim.openstreetmap.org").build();
         this.redisTemplate = redisTemplate;
+        this.redisTTL = redisTTL;
     }
 
-    public List<String> buscarLogradouros(List<Etapa> etapas){
-
-        RestClient restClient = RestClient.create();
-        List<String> logradouros = new ArrayList<>();
-
-
-        for (Etapa etapa:etapas){
-            Coordenada coordenada = etapa.getCoordenadaFinal();
-
-            if(redisTemplate.hasKey(coordenada.toString())){
-                String ruaRedis =  redisTemplate.opsForValue().get(coordenada.toString()).toString();
-                logradouros.add(ruaRedis);
-            }else{
-                var requisicao = restClient.get()
-                        .uri("https://nominatim.openstreetmap.org/reverse.php?lat=%s&lon=%s&zoom=18&format=jsonv2".formatted(
-                                coordenada.getLat(),coordenada.getLng()
-                        )).retrieve().toEntity(String.class).getBody();;
-                JSONObject jo = new JSONObject(requisicao);
-                try{
-                    var rua = jo.getJSONObject("address").getString("road");
-                    redisTemplate.opsForValue().set(coordenada.toString(), rua);
-                    redisTTL.setKeyWithExpire(coordenada.toString(), rua, 30, TimeUnit.MINUTES);
-                    logradouros.add(rua);
-                }catch (Exception ignored){
-                }
-            }
-        }
-
-
-        return logradouros.stream().distinct().toList();
+    public Flux<String> buscarLogradouros(List<Etapa> etapas) {
+        return Flux.fromIterable(etapas)
+                .flatMap(this::getLogradouro, MAX_CONCURRENT_REQUESTS) // Limita o número de requisições simultâneas
+                .distinct();
     }
 
+    private Mono<String> getLogradouro(Etapa etapa) {
+        Coordenada coordenada = etapa.getCoordenadaFinal();
+        String key = coordenada.toString();
 
+        return Mono.justOrEmpty(redisTemplate.opsForValue().get(key))
+                .switchIfEmpty(fetchAndCacheLogradouro(coordenada, key));
+    }
+
+    private Mono<String> fetchAndCacheLogradouro(Coordenada coordenada, String key) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/reverse.php")
+                        .queryParam("lat", coordenada.getLat())
+                        .queryParam("lon", coordenada.getLng())
+                        .queryParam("zoom", "18")
+                        .queryParam("format", "jsonv2")
+                        .build())
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(response -> {
+                    try {
+                        JSONObject jo = new JSONObject(response);
+                        String rua = jo.getJSONObject("address").getString("road");
+                        redisTemplate.opsForValue().set(key, rua);
+                        redisTTL.setKeyWithExpire(key, rua, 30, TimeUnit.MINUTES);
+                        return Mono.just(rua);
+                    } catch (Exception e) {
+                        return Mono.empty();
+                    }
+                });
+    }
 }

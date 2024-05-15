@@ -9,6 +9,7 @@ import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
+import gogood.gogoodapi.service.RotasService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public class RotasController {
 
     @Autowired
     RotaMapper rotaMapper;
+
+    @Autowired
+    private RotasService rotasService;
 
     public RotasController(RotaMapper rotaMapper) {
         this.rotaMapper = rotaMapper;
@@ -64,7 +68,13 @@ public class RotasController {
 
     @PostMapping("/compartilhar")
     public ResponseEntity<RotaShareResponse> compartilharRota(@RequestBody RotaSharePersist rota, HttpServletRequest request){
-        RotaShareResponse response = rotaMapper.compartilharRota(rota, request);
+        RotaShareResponse response = rotasService.compartilharRota(rota, request);
         return ResponseEntity.status(200).body(response);
+    }
+
+    @GetMapping("/compartilhar/{id}")
+    public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
+        List<Rota> rota = rotasService.obterRotaCompartilhada(id, rotaMapper);
+        return ResponseEntity.status(200).body(rota);
     }
 }

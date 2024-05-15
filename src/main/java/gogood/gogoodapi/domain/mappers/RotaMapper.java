@@ -34,13 +34,12 @@ public class RotaMapper {
     OcorrenciasRuasRepository repository;
 
 
-
     public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
         this.geocodingService = geocodingService;
         this.repository = repository;
     }
 
-    public List<Rota> toRota(DirectionsResult result){
+    public List<Rota> toRota(DirectionsResult result) {
 
 
         List<Rota> rotas = new ArrayList<>();
@@ -56,19 +55,18 @@ public class RotaMapper {
 
 
             definirLogradouros(rotaAtual);
-            definirFlag(rotaAtual);
         }
 
         return rotas;
     }
 
-    private Rota transformarRota(DirectionsLeg directionsLeg){
+    private Rota transformarRota(DirectionsLeg directionsLeg) {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
         Date horaAtual = new Date();
 
-        Calendar  calendario = Calendar.getInstance();
-        calendario.add(Calendar.SECOND,(int)directionsLeg.duration.inSeconds);
+        Calendar calendario = Calendar.getInstance();
+        calendario.add(Calendar.SECOND, (int) directionsLeg.duration.inSeconds);
         Date horaChegada = calendario.getTime();
 
 
@@ -91,27 +89,31 @@ public class RotaMapper {
 
         rota.setHorarioChegada(format.format(horaChegada));
 
-        rota.setDistancia((double) directionsLeg.distance.inMeters /1000);
+        rota.setDistancia((double) directionsLeg.distance.inMeters / 1000);
 
         return rota;
     }
 
-    private void definirLogradouros(Rota rota){
-        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas());
-        rota.setLogradouros(logradouros);
+    private void definirLogradouros(Rota rota) {
+        geocodingService.buscarLogradouros(rota.getEtapas())
+                .collectList()
+                .subscribe(logradouros -> {
+                    rota.setLogradouros(logradouros);
+                    definirFlag(rota);
+                });
     }
 
-    public void definirFlag(Rota rota){
+
+    public void definirFlag(Rota rota) {
         Integer qtdOcorrencias = 0;
-        for (String rua: rota.getLogradouros()){
+        for (String rua : rota.getLogradouros()) {
 
-             var consulta = repository.findById(rua);
+            var consulta = repository.findById(rua);
 
 
-
-            if(consulta.isPresent()){
-                 qtdOcorrencias+=consulta.get().getCount();
-             }
+            if (consulta.isPresent()) {
+                qtdOcorrencias += consulta.get().getCount();
+            }
         }
         rota.setQtdOcorrenciasTotais(qtdOcorrencias);
     }

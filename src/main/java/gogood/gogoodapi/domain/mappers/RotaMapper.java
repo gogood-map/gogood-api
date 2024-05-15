@@ -11,6 +11,7 @@ import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
+import gogood.gogoodapi.repository.CustomOcorrenciaRuaRepository;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.service.GeocodingService;
 import gogood.gogoodapi.service.NavegacaoService;
@@ -32,6 +33,9 @@ public class RotaMapper {
 
     @Autowired
     OcorrenciasRuasRepository repository;
+
+    @Autowired
+    private CustomOcorrenciaRuaRepository ocorrenciaRuaRepository;
 
 
     public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
@@ -101,7 +105,7 @@ public class RotaMapper {
 
         rota.setLogradouros(logradouros);
 
-        Integer qtdOcorrencias = repository.sumCountsByIds(logradouros);
+        Integer qtdOcorrencias = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(logradouros);
 
 
         rota.setQtdOcorrenciasTotais(qtdOcorrencias);

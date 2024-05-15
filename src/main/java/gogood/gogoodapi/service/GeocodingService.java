@@ -19,7 +19,7 @@ public class GeocodingService {
     private final WebClient webClient;
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
-    private static final int MAX_CONCURRENT_REQUESTS = 5; // Número máximo de requisições simultâneas
+    private static final int MAX_CONCURRENT_REQUESTS = 2;
 
     public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
         this.webClient = webClientBuilder.baseUrl("https://nominatim.openstreetmap.org").build();
@@ -29,7 +29,7 @@ public class GeocodingService {
 
     public Flux<String> buscarLogradouros(List<Etapa> etapas) {
         return Flux.fromIterable(etapas)
-                .flatMap(this::getLogradouro, MAX_CONCURRENT_REQUESTS) // Limita o número de requisições simultâneas
+                .flatMap(this::getLogradouro, MAX_CONCURRENT_REQUESTS)
                 .distinct();
     }
 

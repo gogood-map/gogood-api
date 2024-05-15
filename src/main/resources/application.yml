@@ -27,7 +27,7 @@ spring:
       write-date-keys-as-timestamps: true
   data:
     redis:
-      port: ${REDIS_PORT}
+      port: 6379
       host: ${REDIS_HOST}
       lettuce:
         pool:

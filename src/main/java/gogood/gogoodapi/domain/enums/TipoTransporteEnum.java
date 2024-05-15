@@ -12,7 +12,14 @@ public enum TipoTransporteEnum {
         this.tipoTransporte = tipoTransporte;
     }
 
+    public static Boolean istipoTransporte(String transporte) {
+        String tipoTransporte = transporte.toUpperCase();
+        return tipoTransporte.equals("TRANSPORTE_PUBLICO") || tipoTransporte.equals("BIKE") || tipoTransporte.equals("VEICULO") || tipoTransporte.equals("A_PE");
+
+    }
+
     public String getTipoTransporte() {
         return tipoTransporte;
     }
+
 }

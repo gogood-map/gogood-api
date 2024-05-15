@@ -19,7 +19,7 @@ public class GeocodingService {
     private final WebClient webClient;
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
-    private static final int MAX_CONCURRENT_REQUESTS = 5; // Número máximo de requisições simultâneas
+    private static final int MAX_CONCURRENT_REQUESTS = 2; // Número máximo de requisições simultâneas
 
     public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
         this.webClient = webClientBuilder.baseUrl("https://nominatim.openstreetmap.org").build();

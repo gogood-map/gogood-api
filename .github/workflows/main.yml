@@ -66,7 +66,17 @@ jobs:
       with:
         name: application
         path: target/
-          
+    
+    - name: Upload .env File
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AZURE_VM_PORT }}
+        source: ".env"
+        target: "/home/gogood/gogood-jar/.env"
+
     - name: Deploy to Azure VM
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -85,17 +95,16 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.AZURE_VM_PORT }}
         script: |
-          sudo mv /home/gogood/java-app/*.jar /home/gogood/gogood-jar
-          export REDIS_HOST=${{ secrets.REDIS_HOST }}
-          export REDIS_PORT=${{ secrets.REDIS_PORT }}
-          export R2DBC_URL=${{ secrets.R2DBC_URL }}
-          export R2DBC_USERNAME=${{ secrets.R2DBC_USERNAME }}
-          export R2DBC_PASSWORD=${{ secrets.R2DBC_PASSWORD }}
-          export JDBC_URL=${{ secrets.JDBC_URL }}
-          export JDBC_USERNAME=${{ secrets.JDBC_USERNAME }}
-          export JDBC_PASSWORD=${{ secrets.JDBC_PASSWORD }}
-          export MONGODB_URL=${{ secrets.MONGODB_URL }}
-          export MONGODB_DATABASE=${{ secrets.MONGODB_DATABASE }}
-          export SWAGGER_URL=${{ secrets.SWAGGER_URL }}
-          export GOOGLE_API_KEY=${{ secrets.GOOGLE_API_KEY }}
+          # Remover o JAR antigo se existir
+          sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Mover o novo JAR para o diretório correto
+          sudo mv /home/gogood/java-app/target/*.jar /home/gogood/gogood-jar/
+          # Certificar que o novo JAR tem permissões corretas
+          sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Garantir que o arquivo .env está presente
+          if [ ! -f /home/gogood/gogood-jar/.env ]; then
+              echo ".env file not found!"
+              exit 1
+          fi
+          # Iniciar a aplicação
           nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &

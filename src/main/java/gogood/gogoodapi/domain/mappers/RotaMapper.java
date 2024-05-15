@@ -101,14 +101,8 @@ public class RotaMapper {
 
         rota.setLogradouros(logradouros);
 
-        Integer qtdOcorrencias = 0;
-        var lista = repository.findAll();
-        for (int i = 0; i < rota.getLogradouros().size(); i++) {
-            int indice = Arrays.binarySearch(lista.toArray(), rota.getLogradouros().get(i));
-            if (indice >= 0) {
-                qtdOcorrencias += lista.get(indice).getCount();
-            }
-        }
+        Integer qtdOcorrencias = repository.sumCountsByIds(logradouros);
+
 
         rota.setQtdOcorrenciasTotais(qtdOcorrencias);
     }

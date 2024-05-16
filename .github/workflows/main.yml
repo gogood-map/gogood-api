@@ -24,6 +24,19 @@ jobs:
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+      env:
+        REDIS_HOST: ${{ secrets.REDIS_HOST }}
+        REDIS_PORT: ${{ secrets.REDIS_PORT }}
+        R2DBC_URL: ${{ secrets.R2DBC_URL }}
+        R2DBC_USERNAME: ${{ secrets.R2DBC_USERNAME }}
+        R2DBC_PASSWORD: ${{ secrets.R2DBC_PASSWORD }}
+        JDBC_URL: ${{ secrets.JDBC_URL }}
+        JDBC_USERNAME: ${{ secrets.JDBC_USERNAME }}
+        JDBC_PASSWORD: ${{ secrets.JDBC_PASSWORD }}
+        MONGODB_URL: ${{ secrets.MONGODB_URL }}
+        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+        SWAGGER_URL: ${{ secrets.SWAGGER_URL }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
 
     - name: Bump version and push tag
       id: tag_version
@@ -51,18 +64,18 @@ jobs:
     - name: Download Artifacts
       uses: actions/download-artifact@v4
       with:
-          name: application
-          path: target/
-          
+        name: application
+        path: target/
+
     - name: Deploy to Azure VM
       uses: appleboy/scp-action@v0.1.7
       with:
-          host: ${{ secrets.AZURE_VM_HOST }}
-          username: ${{ secrets.AZURE_VM_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.AZURE_VM_PORT }}
-          source: "target/*.jar"
-          target: "/home/gogood/java-app"
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AZURE_VM_PORT }}
+        source: "target/*.jar"
+        target: "/home/gogood/java-app"
 
     - name: Move Java App to File Gogood
       uses: appleboy/ssh-action@v1.0.3
@@ -72,5 +85,15 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.AZURE_VM_PORT }}
         script: |
-          sudo mv /home/gogood/java-app/target/*.jar /home/gogood/gogood-jar
+          # Remover o JAR antigo se existir
+          sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Mover o novo JAR para o diretório correto
+          sudo mv /home/gogood/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar /home/gogood/gogood-jar/
+          # Certificar que o novo JAR tem permissões corretas
+          sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Carregar variáveis de ambiente do arquivo .env
+          set -a
+          source /home/gogood/gogood-jar/.env
+          set +a
+          # Iniciar a aplicação
           nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &

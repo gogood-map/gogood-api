@@ -11,6 +11,7 @@ import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
+import gogood.gogoodapi.repository.CustomOcorrenciaRuaRepository;
 import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.service.GeocodingService;
 import gogood.gogoodapi.service.NavegacaoService;
@@ -32,6 +33,9 @@ public class RotaMapper {
 
     @Autowired
     OcorrenciasRuasRepository repository;
+
+    @Autowired
+    private CustomOcorrenciaRuaRepository ocorrenciaRuaRepository;
 
 
     public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
@@ -95,28 +99,17 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota) {
-        geocodingService.buscarLogradouros(rota.getEtapas())
+        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas())
                 .collectList()
-                .subscribe(logradouros -> {
-                    rota.setLogradouros(logradouros);
-                    definirFlag(rota);
-                });
-    }
+                .block();  // Bloqueia até que todos os logradouros sejam coletados
+
+        rota.setLogradouros(logradouros);
+
+        logradouros.replaceAll(s -> s.replace("\"", ""));
+        Integer qtdOcorrencias = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(logradouros);
 
 
-    public void definirFlag(Rota rota) {
-        Integer qtdOcorrencias = 0;
-        for (String rua : rota.getLogradouros()) {
-
-            var consulta = repository.findById(rua);
-
-
-            if (consulta.isPresent()) {
-                qtdOcorrencias += consulta.get().getCount();
-            }
-        }
         rota.setQtdOcorrenciasTotais(qtdOcorrencias);
     }
-
 
 }

@@ -10,7 +10,8 @@ import java.util.Optional;
 
 public interface OcorrenciasRuasRepository extends MongoRepository<OcorrenciaRua, String> {
 
-    Optional<OcorrenciaRua> findBy_id(String _id);
+    @Query(value = "{ '_id': { $in: ?0 } }", fields = "{ 'total': { $sum: '$count' } }")
+    Long findTotalCountByRuas(List<String> ruas);
 
 
 }

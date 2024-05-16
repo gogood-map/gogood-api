@@ -107,7 +107,7 @@ public class RotaMapper {
         rota.setLogradouros(logradouros);
 
         logradouros.replaceAll(s -> s.replace("\"", ""));
-        Integer qtdOcorrenciasTotais = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(rota.getLogradouros());
+        Integer qtdOcorrenciasTotais = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(logradouros);
         rota.setQtdOcorrenciasTotais(qtdOcorrenciasTotais);
     }
 

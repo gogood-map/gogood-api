@@ -100,10 +100,13 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota) {
-        rota.setLogradouros(geocodingService.buscarLogradouros(rota.getEtapas())
+        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas())
                 .collectList()
-                .block());
+                .block();
 
+        rota.setLogradouros(logradouros);
+
+        logradouros.replaceAll(s -> s.replace("\"", ""));
         Integer qtdOcorrenciasTotais = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(rota.getLogradouros());
         rota.setQtdOcorrenciasTotais(qtdOcorrenciasTotais);
     }

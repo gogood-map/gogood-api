@@ -42,26 +42,22 @@ public class GeocodingService {
     }
 
     private Mono<String> fetchAndCacheLogradouro(Coordenada coordenada, String key) {
+        String bigDataCloudApiKey = "bdc_5f1d8acad0824e15ae424ede15963beb"; // Substitua com seu token real
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/reverse.php")
-                        .queryParam("lat", coordenada.getLat())
-                        .queryParam("lon", coordenada.getLng())
-                        .queryParam("zoom", "18")
-                        .queryParam("format", "jsonv2")
+                        .scheme("https")
+                        .host("api.bigdatacloud.net")
+                        .path("/data/reverse-geocode-client")
+                        .queryParam("latitude", coordenada.getLat())
+                        .queryParam("longitude", coordenada.getLng())
+                        .queryParam("localityLanguage", "pt")
+                        .queryParam("key", bigDataCloudApiKey)
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)
-                .flatMap(response -> {
-                    try {
-                        JSONObject jo = new JSONObject(response);
-                        String rua = jo.getJSONObject("address").getString("road");
-                        redisTemplate.opsForValue().set(key, rua);
-                        redisTTL.setKeyWithExpire(key, rua, 30, TimeUnit.MINUTES);
-                        return Mono.just(rua);
-                    } catch (Exception e) {
-                        return Mono.empty();
-                    }
-                });
+                .map(response -> new JSONObject(response).getString("locality"))
+                .doOnSuccess(locality -> redisTTL.setKeyWithExpire(key, locality, 3600, TimeUnit.SECONDS)); // Supondo TTL de 3600 segundos
     }
+
 }

@@ -20,6 +20,7 @@ public class GeocodingService {
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
 
+
     public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
         this.webClient = webClientBuilder.baseUrl("https://api.opencagedata.com").build();
         this.redisTemplate = redisTemplate;

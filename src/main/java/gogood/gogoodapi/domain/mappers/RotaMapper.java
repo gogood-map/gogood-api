@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -33,9 +34,9 @@ public class RotaMapper {
 
     @Autowired
     OcorrenciasRuasRepository repository;
-
     @Autowired
     private CustomOcorrenciaRuaRepository ocorrenciaRuaRepository;
+
 
 
     public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
@@ -101,15 +102,15 @@ public class RotaMapper {
     private void definirLogradouros(Rota rota) {
         List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas())
                 .collectList()
-                .block();  // Bloqueia até que todos os logradouros sejam coletados
+                .block();
 
         rota.setLogradouros(logradouros);
 
         logradouros.replaceAll(s -> s.replace("\"", ""));
-        Integer qtdOcorrencias = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(logradouros);
-
-
-        rota.setQtdOcorrenciasTotais(qtdOcorrencias);
+        Integer qtdOcorrenciasTotais = ocorrenciaRuaRepository.getTotalOccurrencesByStreets(logradouros);
+        rota.setQtdOcorrenciasTotais(qtdOcorrenciasTotais);
     }
+
+
 
 }

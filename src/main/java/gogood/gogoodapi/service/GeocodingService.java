@@ -20,18 +20,16 @@ public class GeocodingService {
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
 
-    private static final int MAX_CONCURRENT_REQUESTS = 2;
-
 
     public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
-        this.webClient = webClientBuilder.baseUrl("https://nominatim.openstreetmap.org").build();
+        this.webClient = webClientBuilder.baseUrl("https://api.opencagedata.com").build();
         this.redisTemplate = redisTemplate;
         this.redisTTL = redisTTL;
     }
 
     public Flux<String> buscarLogradouros(List<Etapa> etapas) {
         return Flux.fromIterable(etapas)
-                .flatMap(this::getLogradouro, MAX_CONCURRENT_REQUESTS)
+                .flatMap(this::getLogradouro)
                 .distinct();
     }
 
@@ -44,26 +42,28 @@ public class GeocodingService {
     }
 
     private Mono<String> fetchAndCacheLogradouro(Coordenada coordenada, String key) {
+        String openCageApiKey = "18741d1ada13437cafd2aefd26904b6e"; // Use seu token real
+
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
-                        .path("/reverse.php")
-                        .queryParam("lat", coordenada.getLat())
-                        .queryParam("lon", coordenada.getLng())
-                        .queryParam("zoom", "18")
-                        .queryParam("format", "jsonv2")
+                        .path("/geocode/v1/json")
+                        .queryParam("q", coordenada.getLat() + "," + coordenada.getLng())
+                        .queryParam("key", openCageApiKey)
+                        .queryParam("language", "pt")
+                        .queryParam("pretty", "1")
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)
-                .flatMap(response -> {
-                    try {
-                        JSONObject jo = new JSONObject(response);
-                        String rua = jo.getJSONObject("address").getString("road");
-                        redisTemplate.opsForValue().set(key, rua);
-                        redisTTL.setKeyWithExpire(key, rua, 30, TimeUnit.MINUTES);
-                        return Mono.just(rua);
-                    } catch (Exception e) {
-                        return Mono.empty();
+                .map(response -> {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    if (!jsonResponse.getJSONArray("results").isEmpty()) {
+                        JSONObject components = jsonResponse.getJSONArray("results").getJSONObject(0).getJSONObject("components");
+                        if (components.has("road")) {
+                            return components.getString("road"); // Pega o nome da rua
+                        }
                     }
-                });
+                    return "Endereço não encontrado"; // Caso não encontre a rua ou a resposta seja vazia
+                })
+                .doOnSuccess(locality -> redisTTL.setKeyWithExpire(key, locality, 3600, TimeUnit.SECONDS));
     }
 }

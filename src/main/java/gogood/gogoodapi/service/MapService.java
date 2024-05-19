@@ -23,7 +23,7 @@ public class MapService {
 
     public MapList getAndSaveByLocation(Double latitude, Double longitude) {
         JdbcConfig jdbcConfig = new JdbcConfig();
-        String sql = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LATITUDE)))) AS distance FROM ocorrencias HAVING distance <= 2";
+        String sql = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LONGITUDE)) * cos(radians(LATITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LONGITUDE)))) AS distance FROM ocorrencias HAVING distance <= 2";
 
         List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query(sql, new Object[]{latitude, longitude, latitude}, new BeanPropertyRowMapper<>(MapData.class));
 
@@ -35,6 +35,7 @@ public class MapService {
             map.put("longitude", mapa.getLongitude());
             map.put("latitude", mapa.getLatitude());
             map.put("id", mapa.getId());
+            map.put("ano_ocorrencia", mapa.getAno_ocorrencia());
             mapData.add(map);
         }
 

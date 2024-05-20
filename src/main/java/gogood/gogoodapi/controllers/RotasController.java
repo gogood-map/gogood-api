@@ -67,8 +67,8 @@ public class RotasController {
     }
 
     @PostMapping("/compartilhar")
-    public ResponseEntity<RotaShareResponse> compartilharRota(@RequestBody RotaSharePersist rota, HttpServletRequest request){
-        RotaShareResponse response = rotasService.compartilharRota(rota, request);
+    public ResponseEntity<RotaShareResponse> compartilharRota(@RequestBody RotaSharePersist rota){
+        RotaShareResponse response = rotasService.compartilharRota(rota);
         return ResponseEntity.status(200).body(response);
     }
 

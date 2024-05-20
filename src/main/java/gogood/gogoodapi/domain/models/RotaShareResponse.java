@@ -10,5 +10,5 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 public class RotaShareResponse {
-    private Map<String, String> url;
+    private String url;
 }

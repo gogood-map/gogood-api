@@ -12,14 +12,11 @@ import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
 import gogood.gogoodapi.utils.RedisTTL;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -34,18 +31,14 @@ public class RotasService {
         this.redisTemplate = redisTemplate;
     }
 
-    public RotaShareResponse compartilharRota(RotaSharePersist rota, HttpServletRequest request)  {
+    public RotaShareResponse compartilharRota(RotaSharePersist rota)  {
         String id = UUID.randomUUID().toString();
         String chave = "rotasCompartilhadas:" + id;
         redisTemplate.opsForValue().set(chave, rota);
         redisTTL.setKeyWithExpire(chave, rota, 30, TimeUnit.MINUTES);
 
-        String baseUrl = String.format("%s://%s:%d", request.getScheme(), request.getServerName(), request.getServerPort());
-        Map<String, String> url = new HashMap<>();
-        url.put("url", baseUrl + "/rotas/compartilhar/" + id);
-
         RotaShareResponse response = new RotaShareResponse();
-        response.setUrl(url);
+        response.setUrl(id);
         return response;
     }
 

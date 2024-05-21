@@ -5,6 +5,7 @@ import gogood.gogoodapi.domain.models.Etapa;
 import gogood.gogoodapi.utils.RedisTTL;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
+import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 public class GeocodingService {
 
     private final WebClient webClient;
-    private final RedisTemplate<String, String> redisTemplate;
+    private final ReactiveRedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
 
-    public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
+    public GeocodingService(WebClient.Builder webClientBuilder, ReactiveRedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
         this.webClient = webClientBuilder.baseUrl("https://api.opencagedata.com").build();
         this.redisTemplate = redisTemplate;
         this.redisTTL = redisTTL;
@@ -37,7 +38,7 @@ public class GeocodingService {
         Coordenada coordenada = etapa.getCoordenadaFinal();
         String key = coordenada.toString();
 
-        return Mono.justOrEmpty(redisTemplate.opsForValue().get(key))
+        return redisTemplate.opsForValue().get(key)
                 .switchIfEmpty(fetchAndCacheLogradouro(coordenada, key));
     }
 

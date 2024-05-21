@@ -36,6 +36,7 @@ spring:
           min-idle: 1
           max-wait: 1000ms
       timeout: 120000
+      password: ${REDIS_PASSWORD}
 
     mongodb:
       repositories:

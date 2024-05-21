@@ -6,12 +6,13 @@ import gogood.gogoodapi.utils.RedisTTL;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -56,6 +57,7 @@ public class GeocodingService {
                         .build())
                 .retrieve()
                 .bodyToMono(String.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)))
                 .map(response -> {
                     JSONObject jsonResponse = new JSONObject(response);
                     if (!jsonResponse.getJSONArray("results").isEmpty()) {

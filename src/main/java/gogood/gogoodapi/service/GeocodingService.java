@@ -68,7 +68,7 @@ public class GeocodingService {
                 JSONObject components = jsonResponse.getJSONArray("results").getJSONObject(0).getJSONObject("components");
                 if (components.has("road")) {
                     String road = components.getString("road");
-                    redisTTL.setKeyWithExpire(key, road, 3600, TimeUnit.SECONDS);
+                    redisTTL.setKeyWithExpire(key, road, 30, TimeUnit.MINUTES);
                     return road;
                 }
             }

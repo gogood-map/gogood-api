@@ -100,9 +100,7 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota) {
-        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas())
-                .collectList()
-                .block();
+        List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas());
 
         rota.setLogradouros(logradouros);
 

@@ -31,7 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class RotaMapper {
     @Autowired
     GeocodingService geocodingService;
-
     @Autowired
     OcorrenciasRuasRepository repository;
     @Autowired

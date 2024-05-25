@@ -1,11 +1,13 @@
 package gogood.gogoodapi.service;
 
+import gogood.gogoodapi.configuration.redis.RedisHealthCheck;
 import gogood.gogoodapi.domain.models.Coordenada;
 import gogood.gogoodapi.domain.models.Etapa;
 import gogood.gogoodapi.utils.RedisTTL;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -20,24 +22,38 @@ public class GeocodingService {
     private final RedisTemplate<String, String> redisTemplate;
     private final RedisTTL redisTTL;
 
-    public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL) {
+    private RedisHealthCheck redisHealthCheck;
+
+    public GeocodingService(WebClient.Builder webClientBuilder, RedisTemplate<String, String> redisTemplate, RedisTTL redisTTL, RedisHealthCheck redisHealthCheck) {
         this.webClient = webClientBuilder.baseUrl("https://api.opencagedata.com").build();
         this.redisTemplate = redisTemplate;
         this.redisTTL = redisTTL;
+        this.redisHealthCheck = redisHealthCheck;
     }
 
     public List<String> buscarLogradouros(List<Etapa> etapas) {
-        return etapas.parallelStream()
-                .map(this::getLogradouro)
-                .distinct()
-                .collect(Collectors.toList());
+        try{
+            return etapas.parallelStream()
+                    .map(this::getLogradouro)
+                    .distinct()
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private String getLogradouro(Etapa etapa) {
+        if (!redisHealthCheck.isRedisUp()) {
+            return "Problema ao acessar o Redis, tente novamente";
+        }
+        ValueOperations<String, String> valueOps = redisTemplate.opsForValue();
+
+
         Coordenada coordenada = etapa.getCoordenadaFinal();
         String key = coordenada.toString();
 
-        String cachedLogradouro = redisTemplate.opsForValue().get(key);
+        String cachedLogradouro = valueOps.get(key);
         if (cachedLogradouro != null) {
             return cachedLogradouro;
         }

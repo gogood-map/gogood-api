@@ -1,6 +1,6 @@
 package gogood.gogoodapi.controllers;
 
-import gogood.gogoodapi.domain.models.Usuarios;
+import gogood.gogoodapi.domain.DTOS.UsuarioRegistro;
 import gogood.gogoodapi.configuration.JdbcConfig;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,9 +31,9 @@ public class TransferDataController {
     @Operation(summary = "Download de dados de usuários em formato CSV", description = "Exporta os dados de usuários do banco de dados em um arquivo CSV")
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Void> downloadData(HttpServletResponse response) throws IOException {
-        List<Usuarios> allData = jdbcConfig.getConexaoDoBanco().query(
+        List<UsuarioRegistro> allData = jdbcConfig.getConexaoDoBanco().query(
                 "SELECT * FROM usuarios",
-                new BeanPropertyRowMapper<>(Usuarios.class)
+                new BeanPropertyRowMapper<>(UsuarioRegistro.class)
         );
 
         response.setContentType("text/csv");
@@ -45,16 +45,16 @@ public class TransferDataController {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-            for (Usuarios usuarios : allData) {
+            for (UsuarioRegistro usuario : allData) {
                 writer.println(String.format("%d,%s,%s,%s,%s,%s,%s,%s",
-                        usuarios.getID(),
-                        usuarios.getNome(),
-                        usuarios.getEmail(),
-                        usuarios.getSenha(),
-                        dateFormat.format(usuarios.getDt_nascimento()),
-                        usuarios.getGenero(),
-                        usuarios.getGoogle_id(),
-                        timestampFormat.format(usuarios.getCreated_at())));
+                        usuario.getID(),
+                        usuario.getNome(),
+                        usuario.getEmail(),
+                        usuario.getSenha(),
+                        dateFormat.format(usuario.getDt_nascimento()),
+                        usuario.getGenero(),
+                        usuario.getGoogle_id(),
+                        timestampFormat.format(usuario.getCreated_at())));
             }
         }
 
@@ -68,7 +68,7 @@ public class TransferDataController {
             return "Por favor anexe um arquivo CSV";
         }
 
-        List<Usuarios> usuarios = new ArrayList<>();
+        List<UsuarioRegistro> usuarios = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
             String line;
@@ -76,7 +76,7 @@ public class TransferDataController {
 
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                Usuarios usuario = new Usuarios();
+                UsuarioRegistro usuario = new UsuarioRegistro();
                 usuario.setID(Integer.parseInt(data[0]));
                 usuario.setNome(data[1]);
                 usuario.setEmail(data[2]);
@@ -88,7 +88,7 @@ public class TransferDataController {
                 usuarios.add(usuario);
             }
 
-            for (Usuarios usuario : usuarios) {
+            for (UsuarioRegistro usuario : usuarios) {
                 jdbcConfig.getConexaoDoBanco().update(
                         "INSERT INTO usuarios (ID, nome, email, senha, dt_nascimento, genero, google_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                         usuario.getID(), usuario.getNome(), usuario.getEmail(), usuario.getSenha(), usuario.getDt_nascimento(),

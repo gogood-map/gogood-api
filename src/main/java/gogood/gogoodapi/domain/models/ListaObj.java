@@ -10,6 +10,22 @@ public class ListaObj<T> {
         nroElem = 0;
         vetor = (T[]) new Object[tamanho];
     }
+
+    public ListaObj(T itens[]){
+        vetor = (T[]) new Object[itens.length];
+        nroElem = 0;
+        int i = 0;
+        while (!this.isFull()){
+            this.adiciona(itens[i]);
+            i++;
+        }
+    }
+    public boolean isEmpty(){
+        return nroElem == 0;
+    }
+    public boolean isFull(){
+        return nroElem >= vetor.length;
+    }
     public void adiciona(T elemento) {
         if(nroElem < vetor.length){
             vetor[nroElem] = elemento;

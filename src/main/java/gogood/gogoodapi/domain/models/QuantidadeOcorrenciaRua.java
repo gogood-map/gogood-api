@@ -9,9 +9,11 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Setter
 @Document(value = "viewOcorrenciaRua")
 
-public class OcorrenciaRua {
+public class QuantidadeOcorrenciaRua {
     @MongoId
-    private String _id;
+    private InfoLogradouro _id;
     private Integer count;
+    private Integer count2023;
+    private Integer count2024;
 
 }

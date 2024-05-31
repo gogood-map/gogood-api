@@ -25,4 +25,9 @@ public class HistoricoRotaController {
 
         return ResponseEntity.status(200).body(historicoRotas);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarHistoricoRota(@PathVariable Integer id) {
+        historicoRotaService.deleteAll(id);
+        return ResponseEntity.status(204).build();
+    }
 }

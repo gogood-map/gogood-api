@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface HistoricoRotaRepository extends CrudRepository<HistoricoRotas, Integer> {
 
     Optional<List<HistoricoRotas>> findByIdUsuario(Integer idUsuario);
+
+    void deleteAllByIdUsuario(Integer idUsuario);
 }

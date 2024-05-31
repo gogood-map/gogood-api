@@ -28,4 +28,8 @@ public class HistoricoRotaService {
         Optional<List<HistoricoRotas>> historicoRotas = repository.findByIdUsuario(id);
         return historicoRotas.orElse(null);
     }
+
+    public void deleteAll(Integer id) {
+        repository.deleteAllByIdUsuario(id);
+    }
 }

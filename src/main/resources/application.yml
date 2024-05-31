@@ -8,7 +8,6 @@
 #      r2dbc: DEBUG
 #    reactor: DEBUG
 
-
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -43,3 +42,13 @@ spring:
         type: imperative
       uri: ${MONGODB_URL}
       database: ${MONGODB_DATABASE}
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+            repository:
+              Query: DEBUG

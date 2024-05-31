@@ -1,4 +1,4 @@
-package gogood.gogoodapi.domain.models;
+package gogood.gogoodapi.domain.models.estrutura;
 
 public class Pilha<T> {
     T pilha[];

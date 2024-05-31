@@ -2,12 +2,15 @@ package gogood.gogoodapi.service;
 
 import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
 import gogood.gogoodapi.domain.mappers.OcorrenciaRuaMapper;
+import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRegiaoAnoMes;
+import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRegiaoAnoMesSimples;
 import gogood.gogoodapi.domain.models.estrutura.Fila;
 import gogood.gogoodapi.domain.models.estrutura.ListaObj;
 import gogood.gogoodapi.domain.models.Ocorrencia;
 import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRua;
 import gogood.gogoodapi.exceptions.ListaVaziaException;
 import gogood.gogoodapi.repository.OcorrenciaRepository;
+import gogood.gogoodapi.repository.QuantidadeOcorrenciaRegiaoRepository;
 import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.utils.Ordenacao;
 import gogood.gogoodapi.utils.PesquisaBinaria;
@@ -26,7 +29,8 @@ public class OcorrenciaService {
     QuantidadeOcorrenciaRuaRepository quantidadeOcorrenciaRuaRepository;
     @Autowired
     OcorrenciaRepository ocorrenciaRepository;
-
+    @Autowired
+    QuantidadeOcorrenciaRegiaoRepository quantidadeOcorrenciaRegiaoRepository;
 
 
     public OcorrenciaService(QuantidadeOcorrenciaRuaRepository quantidadeOcorrenciaRuaRepository, OcorrenciaRepository ocorrenciaRepository) {
@@ -83,5 +87,17 @@ public class OcorrenciaService {
             historico[i][3] = "%d".formatted(quantidadeOcorrenciaAtual.getCount());
         }
         return historico;
+    }
+
+    public List<QuantidadeOcorrenciaRegiaoAnoMesSimples> obterQuantidadeOcorrenciasPorRegiao(String cidade, String bairro) {
+        var lista = quantidadeOcorrenciaRegiaoRepository.findFirst12ByInfoRegiaoAnoMes_AnoMesNotContainsAndInfoRegiaoAnoMes_CidadeAndInfoRegiaoAnoMes_BairroOrderByInfoRegiaoAnoMes_AnoMesDesc(
+                "nan",cidade,bairro);
+        if(lista.isEmpty()){
+            throw new ListaVaziaException();
+        }
+        var listaSimples = lista.stream().map(
+                i->new QuantidadeOcorrenciaRegiaoAnoMesSimples(i.getInfoRegiaoAnoMes().getAnoMes(), i.getCount())
+        ).toList();
+        return listaSimples;
     }
 }

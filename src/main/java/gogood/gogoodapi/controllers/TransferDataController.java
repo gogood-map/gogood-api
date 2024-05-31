@@ -66,7 +66,7 @@ public class TransferDataController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "Download de dados de ocorrências por bairro em formato HTML", description = "Download de dados de ocorrências por bairro em formato HTML")
+    @Operation(summary = "Download de dados de ocorrências por bairro", description = "Download de dados de ocorrências por bairro")
     @GetMapping(value = "/relatorio", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Void> gerarRelatorioBairro(HttpServletResponse response, @RequestParam String bairro,  @RequestParam String cidade) throws IOException {
 
@@ -78,10 +78,9 @@ public class TransferDataController {
         ));
 
 
-
+        var historicoBairro = ocorrenciaService.
+                obterHistoricoQuantidadeOcorrenciasBairro(StringHelper.normalizar(cidade), StringHelper.normalizar(bairro));
         try (PrintWriter writer = response.getWriter()) {
-           var historicoBairro = ocorrenciaService.
-                   obterHistoricoQuantidadeOcorrenciasBairro(StringHelper.normalizar(cidade), StringHelper.normalizar(bairro));
            writer.println("LOGRADOURO,QUANTIDADE_OCORRENCIAS_2023,QUANTIDADE_OCORRENCIAS_2024,QUANTIDADE_OCORRENCIAS_TOTAL");
             for (int i = 0; i < historicoBairro.length; i++) {
                 writer.println(String.format("%s,%s,%s,%s",

@@ -2,43 +2,29 @@ package gogood.gogoodapi.domain.mappers;
 
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
-import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
-import gogood.gogoodapi.domain.enums.TipoTransporteEnum;
 import gogood.gogoodapi.domain.models.Rota;
-import gogood.gogoodapi.domain.models.RotaShareResponse;
-import gogood.gogoodapi.domain.strategy.RotaStrategy;
-import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
-import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
-import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
-import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
-import gogood.gogoodapi.repository.CustomOcorrenciaRuaRepository;
-import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
+import gogood.gogoodapi.repository.CustomQuantidadeOcorrenciaRuaRepository;
+import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.service.GeocodingService;
-import gogood.gogoodapi.service.NavegacaoService;
-import gogood.gogoodapi.utils.RedisTTL;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class RotaMapper {
     @Autowired
     GeocodingService geocodingService;
     @Autowired
-    OcorrenciasRuasRepository repository;
+    QuantidadeOcorrenciaRuaRepository repository;
     @Autowired
-    private CustomOcorrenciaRuaRepository ocorrenciaRuaRepository;
+    private CustomQuantidadeOcorrenciaRuaRepository ocorrenciaRuaRepository;
 
 
 
-    public RotaMapper(GeocodingService geocodingService, OcorrenciasRuasRepository repository) {
+    public RotaMapper(GeocodingService geocodingService, QuantidadeOcorrenciaRuaRepository repository) {
         this.geocodingService = geocodingService;
         this.repository = repository;
     }

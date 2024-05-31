@@ -1,14 +1,18 @@
 package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.DTOS.UsuarioRegistro;
-import gogood.gogoodapi.configuration.JdbcConfig;
+import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRua;
+import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
+import gogood.gogoodapi.service.OcorrenciaService;
+import gogood.gogoodapi.service.UsuarioService;
+import gogood.gogoodapi.utils.StringHelper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,16 +30,16 @@ import java.util.List;
 @RequestMapping("/transfer")
 @Tag(name = "Transferência de Dados", description = "Transferir dados de usuários")
 public class TransferDataController {
+    @Autowired
+    private UsuarioService usuarioService;
+    @Autowired
+    private OcorrenciaService ocorrenciaService;
 
-    JdbcConfig jdbcConfig = new JdbcConfig();
 
     @Operation(summary = "Download de dados de usuários em formato CSV", description = "Exporta os dados de usuários do banco de dados em um arquivo CSV")
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Void> downloadData(HttpServletResponse response) throws IOException {
-        List<UsuarioRegistro> allData = jdbcConfig.getConexaoDoBanco().query(
-                "SELECT * FROM usuarios",
-                new BeanPropertyRowMapper<>(UsuarioRegistro.class)
-        );
+        List<UsuarioRegistro> allData = usuarioService.obterUsuarios();
 
         response.setContentType("text/csv");
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"usuarios.csv\"");
@@ -56,6 +61,38 @@ public class TransferDataController {
                         usuario.getGoogle_id(),
                         timestampFormat.format(usuario.getCreated_at())));
             }
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Download de dados de ocorrências por bairro em formato HTML", description = "Download de dados de ocorrências por bairro em formato HTML")
+    @GetMapping(value = "/relatorio", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Void> gerarRelatorioBairro(HttpServletResponse response, @RequestParam String bairro,  @RequestParam String cidade) throws IOException {
+
+        var data = LocalDate.now();
+
+        response.setContentType("text/csv");
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"relatorio_%s_%d-%d-%d.csv\"".formatted(
+        bairro, data.getDayOfYear(), data.getMonth().getValue(), data.getYear()
+        ));
+
+
+
+        try (PrintWriter writer = response.getWriter()) {
+           var historicoBairro = ocorrenciaService.
+                   obterHistoricoQuantidadeOcorrenciasBairro(StringHelper.normalizar(cidade), StringHelper.normalizar(bairro));
+           writer.println("LOGRADOURO,QUANTIDADE_OCORRENCIAS_2023,QUANTIDADE_OCORRENCIAS_2024,QUANTIDADE_OCORRENCIAS_TOTAL");
+            for (int i = 0; i < historicoBairro.length; i++) {
+                writer.println(String.format("%s,%s,%s,%s",
+                        historicoBairro[i][0],
+                        historicoBairro[i][1],
+                        historicoBairro[i][2],
+                        historicoBairro[i][3]
+                ));
+
+            }
+
         }
 
         return ResponseEntity.ok().build();
@@ -89,11 +126,7 @@ public class TransferDataController {
             }
 
             for (UsuarioRegistro usuario : usuarios) {
-                jdbcConfig.getConexaoDoBanco().update(
-                        "INSERT INTO usuarios (ID, nome, email, senha, dt_nascimento, genero, google_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                        usuario.getID(), usuario.getNome(), usuario.getEmail(), usuario.getSenha(), usuario.getDt_nascimento(),
-                        usuario.getGenero(), usuario.getGoogle_id(), usuario.getCreated_at()
-                );
+               usuarioService.inserirUsuario(usuario);
             }
         } catch (Exception e) {
             return "Erro: " + e.getMessage();

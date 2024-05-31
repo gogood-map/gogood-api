@@ -28,13 +28,14 @@ import java.util.Arrays;
 
 @Configuration
 public class RedisConfiguration {
+
     @Value("${spring.data.redis.host}")
     private String redisHost;
 
-    @Value("${spring.data.redis..port}")
+    @Value("${spring.data.redis.port}")
     private int redisPort;
 
-    @Value("${spring.data.redis..password}")
+    @Value("${spring.data.redis.password}")
     private String redisPassword;
 
     @Bean(destroyMethod = "shutdown")
@@ -54,8 +55,7 @@ public class RedisConfiguration {
         poolConfig.setTestOnBorrow(true);
         poolConfig.setTestOnReturn(true);
         poolConfig.setTestWhileIdle(true);
-        poolConfig.setTimeBetweenEvictionRuns(Duration.ofDays(Duration.ofMinutes(1).toMillis())); // Verifica conexões a cada minuto
-        poolConfig.setMinEvictableIdleTime(Duration.ofDays(Duration.ofMinutes(1).toMillis())); // Conexões ociosas por mais de 5 minutos serão fechadas
+        poolConfig.setTimeBetweenEvictionRuns(Duration.ofMinutes(1));
 
         LettuceClientConfiguration clientConfig = LettucePoolingClientConfiguration.builder()
                 .commandTimeout(Duration.ofSeconds(10))
@@ -66,21 +66,6 @@ public class RedisConfiguration {
 
         return new LettuceConnectionFactory(config, clientConfig);
     }
-
-
-    @Bean
-    public ReactiveRedisTemplate<String, Object> reactiveRedisTemplate(ReactiveRedisConnectionFactory factory) {
-        StringRedisSerializer keySerializer = new StringRedisSerializer();
-
-        Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
-
-        RedisSerializationContext.RedisSerializationContextBuilder<String, Object> builder =
-                RedisSerializationContext.newSerializationContext(keySerializer);
-        RedisSerializationContext<String, Object> context = builder.value(valueSerializer).build();
-
-        return new ReactiveRedisTemplate<>(factory, context);
-    }
-
     @Bean
     public RedisCustomConversions redisCustomConversions(ObjectMapper objectMapper) {
         return new RedisCustomConversions(Arrays.asList(
@@ -89,15 +74,13 @@ public class RedisConfiguration {
         ));
     }
 
-
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory, RedisCustomConversions redisCustomConversions) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory(clientResources()));
+        template.setConnectionFactory(connectionFactory);
         template.setKeySerializer(new StringRedisSerializer());
 
         Jackson2JsonRedisSerializer<Object> serializer = new Jackson2JsonRedisSerializer<>(Object.class);
-
         template.setValueSerializer(serializer);
         template.setHashValueSerializer(serializer);
         template.afterPropertiesSet();
@@ -108,6 +91,4 @@ public class RedisConfiguration {
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
-
-
 }

@@ -3,6 +3,7 @@ package gogood.gogoodapi;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import java.nio.file.Files;
@@ -10,7 +11,7 @@ import java.nio.file.Paths;
 
 @SpringBootApplication
 @EnableMongoRepositories
-
+@EnableJpaRepositories
 
 public class GogoodApiApplication {
 	public static void main(String[] args) {

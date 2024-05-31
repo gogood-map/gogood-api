@@ -14,14 +14,14 @@ import java.util.List;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Repository
-public class CustomOcorrenciaRuaRepositoryImpl implements CustomOcorrenciaRuaRepository {
+public class CustomQuantidadeQuantidadeOcorrenciaRuaRepositoryImpl implements CustomQuantidadeOcorrenciaRuaRepository {
 
     @Autowired
     private MongoTemplate mongoTemplate;
 
     @Override
     public Integer getTotalOccurrencesByStreets(List<String> streets) {
-        MatchOperation matchStage = match(Criteria.where("_id").in(streets));
+        MatchOperation matchStage = match(Criteria.where("_id.rua").in(streets));
         Aggregation aggregation = newAggregation(
             matchStage,
             group().sum("count").as("total")

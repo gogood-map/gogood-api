@@ -4,6 +4,7 @@ import gogood.gogoodapi.configuration.redis.RedisHealthCheck;
 import gogood.gogoodapi.domain.models.Coordenada;
 import gogood.gogoodapi.domain.models.Etapa;
 import gogood.gogoodapi.utils.RedisTTL;
+import gogood.gogoodapi.utils.StringHelper;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.json.JSONObject;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -55,7 +56,7 @@ public class GeocodingService {
 
         String cachedLogradouro = valueOps.get(key);
         if (cachedLogradouro != null) {
-            return cachedLogradouro;
+            return StringHelper.normalizar(redisTemplate.opsForValue().get(key));
         }
 
         String logradouro = fetchAndCacheLogradouro(coordenada, key);
@@ -84,6 +85,7 @@ public class GeocodingService {
                 JSONObject components = jsonResponse.getJSONArray("results").getJSONObject(0).getJSONObject("components");
                 if (components.has("road")) {
                     String road = components.getString("road");
+                    road = StringHelper.normalizar(road);
                     redisTTL.setKeyWithExpire(key, road, 30, TimeUnit.MINUTES);
                     return road;
                 }

@@ -1,21 +1,14 @@
 package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
-import gogood.gogoodapi.domain.mappers.OcorrenciaRuaMapper;
-import gogood.gogoodapi.domain.models.Fila;
-import gogood.gogoodapi.domain.models.OcorrenciaRua;
+import gogood.gogoodapi.domain.models.estrutura.Fila;
 import gogood.gogoodapi.exceptions.ListaVaziaException;
-import gogood.gogoodapi.repository.OcorrenciasRuasRepository;
 import gogood.gogoodapi.service.OcorrenciaService;
-import gogood.gogoodapi.utils.PesquisaBinaria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -35,6 +28,7 @@ public class OcorrenciasController {
     public ResponseEntity<OcorrenciaRuaSimples> buscarQuantidadeOcorrencias(@RequestParam String rua){
         return ResponseEntity.status(200).body(ocorrenciaService.obterQuantidadeOcorrenciasPorRua(rua));
     }
+
 
     @Operation(summary = "Buscar quantidade de ocorrências por ruas", description = "Retorna a quantidade de ocorrências por ruas")
     @PostMapping("/batch")

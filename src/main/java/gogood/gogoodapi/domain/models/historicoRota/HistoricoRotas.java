@@ -23,6 +23,6 @@ public class HistoricoRotas {
     private String meio_locomocao;
     @Column(name = "id_usuario")
     private Integer idUsuario;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy:HH:mm:ss")
     private Date created_at;
 }

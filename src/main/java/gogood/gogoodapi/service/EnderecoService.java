@@ -42,5 +42,4 @@ public class EnderecoService {
         Optional<List<Enderecos>> enderecos = repository.findEnderecosByIdUsuario(id);
         return enderecos.orElse(null);
     }
-
 }

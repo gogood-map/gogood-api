@@ -1,4 +1,4 @@
-package gogood.gogoodapi.configuration.redis.config;
+package gogood.gogoodapi.utils;
 
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;

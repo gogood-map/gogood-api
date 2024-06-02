@@ -31,5 +31,6 @@ public class HistoricoRotaService {
 
     public void deleteAll(Integer id) {
         repository.deleteAllByIdUsuario(id);
+        repository.resetAutoIncrement();
     }
 }

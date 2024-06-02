@@ -1,6 +1,6 @@
 package gogood.gogoodapi.service;
 
-import gogood.gogoodapi.configuration.redis.config.GenericConverter;
+import gogood.gogoodapi.utils.GenericConverter;
 import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
 import gogood.gogoodapi.domain.enums.TipoTransporteEnum;
 import gogood.gogoodapi.domain.mappers.RotaMapper;

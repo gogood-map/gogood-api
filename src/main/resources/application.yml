@@ -31,14 +31,16 @@ spring:
       host: ${REDIS_HOST}
       lettuce:
         pool:
-          time-between-eviction-runs: 60000 # 1 minuto em milissegundos
           max-active: 8
           max-idle: 8
           min-idle: 0
       password: ${REDIS_PASSWORD}
+      timeout: -1
 
     mongodb:
       repositories:
         type: imperative
       uri: ${MONGODB_URL}
       database: ${MONGODB_DATABASE}
+server:
+  port: 8081

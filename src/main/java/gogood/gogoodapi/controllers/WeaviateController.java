@@ -18,7 +18,7 @@ public class WeaviateController {
 
     @PostMapping
     public ResponseEntity<Object> consultarGemini(@RequestBody @Valid WeaviatePersist persist) {
-        Object response = consultaGemini.consultarGemini(persist.getPrompt());
+        Object response = consultaGemini.consultarGemini(persist.getPrompt(), persist.getLimit(), persist.getPage());
         return ResponseEntity.ok(response);
     }
 }

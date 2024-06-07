@@ -1,6 +1,7 @@
 package gogood.gogoodapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.weaviate.client.Config;
 import io.weaviate.client.WeaviateClient;
 import io.weaviate.client.base.Result;
@@ -20,12 +21,13 @@ import java.util.*;
 public class ConsultaGemini {
 
     private WeaviateClient client;
-
+    private final Dotenv dotenv = Dotenv.load(); 
+    private final String apiKey = dotenv.get("GOOGLE_API_KEY");
     public ConsultaGemini() {
         Map<String, String> headers = new HashMap<String, String>() {{
-            put("X-Palm-Api-Key", "AIzaSyA79hirPtJuc7Afk-NzkBDrn9cqfIXBb34");
-            put("X-Google-Vertex-Api-Key", "AIzaSyA79hirPtJuc7Afk-NzkBDrn9cqfIXBb34");
-            put("X-Google-Studio-Api-Key", "AIzaSyA79hirPtJuc7Afk-NzkBDrn9cqfIXBb34");
+            put("X-Palm-Api-Key", apiKey);
+            put("X-Google-Vertex-Api-Key", apiKey);
+            put("X-Google-Studio-Api-Key", apiKey);
         }};
 
         Config config = new Config("http", "gogood.brazilsouth.cloudapp.azure.com:8080", headers);
@@ -53,7 +55,6 @@ public class ConsultaGemini {
 
         List<String> summarizedData = consulta.summarizeResults(allResponses);
         String combinedData = String.join(" ", summarizedData);
-        String apiKey = "AIzaSyA79hirPtJuc7Afk-NzkBDrn9cqfIXBb34";
 
         String finalSummary = consulta.generateFinalSummaryGemini(combinedData, apiKey);
         return (Objects.requireNonNullElse(finalSummary, "Não foi possível gerar um resumo final."));

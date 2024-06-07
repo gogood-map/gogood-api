@@ -22,7 +22,7 @@ public class ConsultaGemini {
 
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load(); 
-    private final String apiKey = dotenv.get("GOOGLE_API_KEY");
+    private final String apiKey = dotenv.get("GEMINI_KEY");
     public ConsultaGemini() {
         Map<String, String> headers = new HashMap<String, String>() {{
             put("X-Palm-Api-Key", apiKey);

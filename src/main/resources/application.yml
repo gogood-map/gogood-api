@@ -42,3 +42,5 @@ spring:
         type: imperative
       uri: ${MONGODB_URL}
       database: ${MONGODB_DATABASE}
+server:
+  port: 5050

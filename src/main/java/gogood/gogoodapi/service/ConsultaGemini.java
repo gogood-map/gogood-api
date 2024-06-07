@@ -23,6 +23,8 @@ public class ConsultaGemini {
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load(); 
     private final String apiKey = dotenv.get("GEMINI_KEY");
+
+
     public ConsultaGemini() {
         Map<String, String> headers = new HashMap<String, String>() {{
             put("X-Palm-Api-Key", apiKey);
@@ -34,11 +36,10 @@ public class ConsultaGemini {
         this.client = new WeaviateClient(config);
     }
 
-    public Object consultarGemini(String prompt) {
-        ConsultaGemini consulta = new ConsultaGemini();
 
-        int limit = 250;
-        int endPage = 5;
+
+    public Object consultarGemini(String prompt, Integer limit, Integer endPage) {
+        ConsultaGemini consulta = new ConsultaGemini();
 
         List<GraphQLResponse> allResponses = new ArrayList<>();
         int offset = 0;

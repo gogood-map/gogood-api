@@ -1,6 +1,8 @@
 package gogood.gogoodapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gogood.gogoodapi.domain.models.iago.IagoParams;
+import gogood.gogoodapi.domain.models.iago.IagoPersist;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.weaviate.client.Config;
 import io.weaviate.client.WeaviateClient;
@@ -18,14 +20,24 @@ import java.net.http.HttpResponse;
 import java.util.*;
 
 @Service
-public class ConsultaGemini {
+public class ConsultaIago {
 
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load(); 
     private final String apiKey = dotenv.get("GEMINI_KEY");
+    private Integer limit = 200;
+    private Integer endPage = 5;
+    private String prePrompt = """
+            Com base APENAS nos dados, desconsidere qualquer outra coisa que você saiba sobre o mundo.\s
+            Caso seja necessário fazer suposições, faça-as de forma consistente com os dados.\s
+            Além do mais, caso peça alguma coisa relacionada a calcular algo, faça isso de forma aproximada e com base nos dados.""";
+    private String posPrompt = """
+    Una estas informações a seguir sem usar nenhum conhecimento do mundo, não ofusque os dados em números,\s
+    caso tenha, não altere nada relevante, a menos que o dado seja repetitivo:
+   \s""";
 
 
-    public ConsultaGemini() {
+    public ConsultaIago() {
         Map<String, String> headers = new HashMap<String, String>() {{
             put("X-Palm-Api-Key", apiKey);
             put("X-Google-Vertex-Api-Key", apiKey);
@@ -36,10 +48,38 @@ public class ConsultaGemini {
         this.client = new WeaviateClient(config);
     }
 
+    public Object mudarParametros(Integer limit, Integer page){
+        this.limit = limit;
+        this.endPage = page;
+        return new IagoParams(limit, page);
+    }
+
+    public Object consultarParametros(){
+        return new IagoParams(limit, endPage);
+    }
+
+    public Object mudarPrompt(String prompt){
+        this.prePrompt = prompt;
+        return new IagoPersist(prompt);
+    }
+
+    public Object consultarPrompt(){
+        return new IagoPersist(prePrompt);
+    }
+
+    public Object mudarPosPrompt(String prompt){
+        this.posPrompt = prompt;
+        return new IagoPersist(prompt);
+    }
+
+    public Object consultarPosPrompt(){
+        return new IagoPersist(posPrompt);
+    }
 
 
-    public Object consultarGemini(String prompt, Integer limit, Integer endPage) {
-        ConsultaGemini consulta = new ConsultaGemini();
+
+    public Object consultarGemini(String prompt) {
+        ConsultaIago consulta = new ConsultaIago();
 
         List<GraphQLResponse> allResponses = new ArrayList<>();
         int offset = 0;
@@ -61,12 +101,9 @@ public class ConsultaGemini {
         return (Objects.requireNonNullElse(finalSummary, "Não foi possível gerar um resumo final."));
     }
 
-    public Result<GraphQLResponse> performQuery(String promptInput, int limit, int offset) {
-        String promptAddition = "Com base APENAS nos dados, desconsidere qualquer outra coisa que você saiba sobre o mundo. " +
-                "Caso seja necessário fazer suposições, faça-as de forma consistente com os dados. " +
-                "Além do mais, caso peça alguma coisa relacionada a calcular algo, faça isso de forma aproximada e com base nos dados.";
 
-        String prompt = promptInput + " " + promptAddition;
+    public Result<GraphQLResponse> performQuery(String promptInput, int limit, int offset) {
+        String prompt = promptInput + " " + prePrompt;
 
         NearTextArgument nearText = NearTextArgument.builder()
                 .concepts(new String[]{prompt})
@@ -136,7 +173,9 @@ public class ConsultaGemini {
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
-        parts.put("text", "Una estas informações a seguir sem usar nenhum conhecimento do mundo, não ofusque os dados em números, caso tenha, não altere nada relevante, a menos que o dado seja repetitivo: \"" + combinedData + "\"");
+
+
+        parts.put("text", posPrompt + combinedData + "\"");
         contents.put("parts", Collections.singletonList(parts));
         requestBody.put("contents", Collections.singletonList(contents));
 

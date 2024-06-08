@@ -44,3 +44,7 @@ spring:
       database: ${MONGODB_DATABASE}
 server:
   port: 5050
+
+jwt:
+  validity: 3600000
+  secret: ${JWT_SECRET}

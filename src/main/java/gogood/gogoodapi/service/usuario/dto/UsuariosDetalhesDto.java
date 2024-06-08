@@ -1,7 +1,7 @@
 package gogood.gogoodapi.service.usuario.dto;
 
 
-import gogood.gogoodapi.domain.DTOS.Usuarios;
+import gogood.gogoodapi.domain.models.Usuarios;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,6 @@
 //package gogood.gogoodapi.controllers;
 //
-//import gogood.gogoodapi.domain.DTOS.UsuarioRegistro;
+//import gogood.gogoodapi.domain.models.UsuarioRegistro;
 //import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRua;
 //import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 //import gogood.gogoodapi.service.OcorrenciaService;

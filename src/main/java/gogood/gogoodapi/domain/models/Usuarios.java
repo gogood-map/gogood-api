@@ -1,5 +1,9 @@
-package gogood.gogoodapi.domain.DTOS;
+package gogood.gogoodapi.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import gogood.gogoodapi.domain.DTOS.UsuarioAtualizado;
+import gogood.gogoodapi.domain.models.endereco.Enderecos;
+import gogood.gogoodapi.domain.models.endereco.EnderecosUsuarios;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Getter
@@ -26,6 +31,10 @@ public class Usuarios {
     private LocalDate created_at;
     private String genero;
     private String google_id;
+
+    @OneToMany(mappedBy = "usuarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<EnderecosUsuarios> endereco;
 
 
     public void atualizar(UsuarioAtualizado usuarioAtualizado){

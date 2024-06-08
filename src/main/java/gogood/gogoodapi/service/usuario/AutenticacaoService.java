@@ -1,7 +1,7 @@
 package gogood.gogoodapi.service.usuario;
 
 
-import gogood.gogoodapi.domain.DTOS.Usuarios;
+import gogood.gogoodapi.domain.models.Usuarios;
 import gogood.gogoodapi.repository.UsuarioRepository;
 import gogood.gogoodapi.service.usuario.dto.UsuariosDetalhesDto;
 import org.springframework.beans.factory.annotation.Autowired;

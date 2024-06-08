@@ -63,6 +63,7 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/usuarios/cadastro-google"),
             new AntPathRequestMatcher("/usuarios/login"),
             new AntPathRequestMatcher("/usuarios/login-google"),
+            new AntPathRequestMatcher("/enderecos/**"),
     };
 
     @Bean
@@ -73,7 +74,7 @@ public class SecurityConfiguracao {
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(URLS_PERMITIDAS)
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
+                        .permitAll()
                 )
                 .exceptionHandling(handling -> handling
                         .authenticationEntryPoint(autenticacaoEntryPoint))

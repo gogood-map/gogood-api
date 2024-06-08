@@ -1,6 +1,8 @@
 package gogood.gogoodapi.domain.models.endereco;
 
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import gogood.gogoodapi.domain.models.Usuarios;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -9,15 +11,17 @@ import lombok.Data;
 public class EnderecosUsuarios {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
-    @Column(name = "id_usuario")
-    private int idUsuario;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_usuario")
+    @JsonBackReference
+    private Usuarios usuarios;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_endereco")
+    @JsonBackReference
     private Enderecos enderecos;
 
-    @Column(name = "tipo_endereco", length = 63)
     private String tipoEndereco;
 }

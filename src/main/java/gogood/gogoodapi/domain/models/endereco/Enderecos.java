@@ -1,8 +1,11 @@
 package gogood.gogoodapi.domain.models.endereco;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import gogood.gogoodapi.domain.models.Usuarios;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.checkerframework.checker.units.qual.C;
 
 import java.util.Date;
 import java.util.Set;
@@ -24,13 +27,16 @@ public class Enderecos {
     private int numero;
 
     @Column(length = 255)
+    private String cidade;
+
+    @Column(length = 255)
     private String bairro;
 
     @Column(name = "created_at")
     private Date createdAt;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "enderecos", fetch = FetchType.LAZY)
-    private Set<EnderecosUsuarios> enderecosUsuarios;
+    @OneToMany(mappedBy = "enderecos", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<EnderecosUsuarios> usuarios;
 
 }

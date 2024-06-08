@@ -1,4 +1,4 @@
-package gogood.gogoodapi.domain.DTOS;
+package gogood.gogoodapi.domain.models;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

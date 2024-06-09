@@ -64,6 +64,11 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/usuarios/login"),
             new AntPathRequestMatcher("/usuarios/login-google"),
             new AntPathRequestMatcher("/enderecos/**"),
+            new AntPathRequestMatcher("/historico-rotas/**"),
+            new AntPathRequestMatcher("/iago/**"),
+            new AntPathRequestMatcher("/ocorrencias/**"),
+            new AntPathRequestMatcher("/rotas/**"),
+            new AntPathRequestMatcher("/consultar/**"),
     };
 
     @Bean

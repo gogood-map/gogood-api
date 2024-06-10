@@ -192,7 +192,7 @@ public class ConsultaIagoService {
 
         String context = "Eu extrai os dados da SSP e coloquei aqui para você.";
         String prompt = "Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências. Forneça uma única resposta de tudo com o que faz mas sentido com esse prompt: "+ promptUser
-                + " Dados combinados: " + combinedData ;
+                + " Dados combinados: " + combinedData + " Dados estruturados: " + structuredData;
 
         parts.put("text", context + " " + prompt+ "\"");
         contents.put("parts", Collections.singletonList(parts));

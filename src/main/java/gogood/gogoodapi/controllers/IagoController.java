@@ -2,7 +2,7 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.models.iago.IagoParams;
 import gogood.gogoodapi.domain.models.iago.IagoPersist;
-import gogood.gogoodapi.service.ConsultaIago;
+import gogood.gogoodapi.service.ConsultaIagoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,47 +12,47 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/iago")
 public class IagoController {
     @Autowired
-    private ConsultaIago consultaIago;
+    private ConsultaIagoService consultaIagoService;
 
     @PostMapping
     public ResponseEntity<Object> consultarGemini(@RequestBody @Valid IagoPersist persist) {
-        Object response = consultaIago.consultarGemini(persist.getPrompt());
+        Object response = consultaIagoService.consultarGemini(persist.getPrompt());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/parametros")
     public ResponseEntity<Object> consultarGeminiParametros(@RequestBody @Valid IagoParams params) {
-        Object response = consultaIago.mudarParametros(params.getLimit(), params.getPage());
+        Object response = consultaIagoService.mudarParametros(params.getLimit(), params.getPage());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/parametros")
     public ResponseEntity<Object> consultarGeminiParametros() {
-        Object response = consultaIago.consultarParametros();
+        Object response = consultaIagoService.consultarParametros();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/preprompt")
     public ResponseEntity<Object> mudarPrompt(@RequestBody @Valid IagoPersist persist) {
-        Object response = consultaIago.mudarPrompt(persist.getPrompt());
+        Object response = consultaIagoService.mudarPrompt(persist.getPrompt());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/preprompt")
     public ResponseEntity<Object> consultarPrompt() {
-        Object response = consultaIago.consultarPrompt();
+        Object response = consultaIagoService.consultarPrompt();
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/posprompt")
     public ResponseEntity<Object> mudarPosPrompt(@RequestBody @Valid IagoPersist persist) {
-        Object response = consultaIago.mudarPosPrompt(persist.getPrompt());
+        Object response = consultaIagoService.mudarPosPrompt(persist.getPrompt());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/posprompt")
     public ResponseEntity<Object> consultarPosPrompt() {
-        Object response = consultaIago.consultarPosPrompt();
+        Object response = consultaIagoService.consultarPosPrompt();
         return ResponseEntity.ok(response);
     }
 

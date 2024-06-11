@@ -18,9 +18,7 @@ spring:
   jpa:
     properties:
       hibernate:
-        ddl-auto: update
         dialect: org.hibernate.dialect.MySQL8Dialect
-    defer-datasource-initialization: true
 
   cache:
     type: redis

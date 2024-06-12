@@ -56,7 +56,7 @@ public class ConsultaIagoService {
 
         try {
             Result<GraphQLResponse> result = client.graphQL().get()
-                    .withClassName("OcorrenciaDetalhada")
+                    .withClassName("OcorrenciaDetalhadaFlash")
                     .withFields(
                             Field.builder().name("crime").build(),
                             Field.builder().name("bairro").build(),
@@ -166,8 +166,8 @@ public class ConsultaIagoService {
             Map<String, Object> data = (Map<String, Object>) response.getData();
             if (data != null && data.containsKey("Get")) {
                 Map<String, Object> get = (Map<String, Object>) data.get("Get");
-                if (get.containsKey("OcorrenciaDetalhada")) {
-                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhada");
+                if (get.containsKey("OcorrenciaDetalhadaFlash")) {
+                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhadaFlash");
                     for (Map<String, Object> ocorrencia : ocorrencias) {
                         Map<String, Object> additional = (Map<String, Object>) ocorrencia.get("_additional");
                         if (additional != null && additional.containsKey("generate")) {
@@ -239,8 +239,8 @@ public class ConsultaIagoService {
             Map<String, Object> data = (Map<String, Object>) response.getData();
             if (data != null && data.containsKey("Get")) {
                 Map<String, Object> get = (Map<String, Object>) data.get("Get");
-                if (get.containsKey("OcorrenciaDetalhada")) {
-                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhada");
+                if (get.containsKey("OcorrenciaDetalhadaFlash")) {
+                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhadaFlash");
                     for (Map<String, Object> ocorrencia : ocorrencias) {
                         Map<String, Object> structuredEntry = new HashMap<>();
                         structuredEntry.put("crime", ocorrencia.get("crime"));

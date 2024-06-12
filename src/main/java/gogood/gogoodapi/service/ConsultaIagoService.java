@@ -191,7 +191,7 @@ public class ConsultaIagoService {
         Map<String, Object> parts = new HashMap<>();
 
         String context = "Eu extrai os dados da SSP e coloquei aqui para você.";
-        String prompt = "Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências (ignore um dado caso ele tenha informado não conseguir informações). Forneça uma única resposta de tudo com o que faz mas sentido"
+        String prompt = "Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências (ignore o dado caso ele tenha informado não conseguir informações, que não foi possivel e que não encontrou). Forneça uma única resposta de tudo com o que faz mas sentido"
                 + " Dados combinados: " + combinedData + " Dados estruturados: " + structuredData;
 
         parts.put("text", context + " " + prompt+ "\"");

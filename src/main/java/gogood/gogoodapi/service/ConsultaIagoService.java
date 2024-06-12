@@ -25,8 +25,8 @@ public class ConsultaIagoService {
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load();
     private final String apiKey = dotenv.get("GEMINI_KEY");
-    private Integer limit = 100;
-    private Integer endPage = 3;
+    private Integer limit = 300;
+    private Integer endPage = 1;
     private String prePrompt = """
             Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências.
             Forneça uma única resposta de tudo com o que faz mas sentido com esse prompt:
@@ -56,7 +56,7 @@ public class ConsultaIagoService {
 
         try {
             Result<GraphQLResponse> result = client.graphQL().get()
-                    .withClassName("OcorrenciaDetalhadaFlash")
+                    .withClassName("OcorrenciaDetalhada")
                     .withFields(
                             Field.builder().name("crime").build(),
                             Field.builder().name("bairro").build(),
@@ -86,7 +86,7 @@ public class ConsultaIagoService {
     }
 
     public String[] getNearTexts(String promptUser){
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + apiKey;
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
@@ -166,8 +166,8 @@ public class ConsultaIagoService {
             Map<String, Object> data = (Map<String, Object>) response.getData();
             if (data != null && data.containsKey("Get")) {
                 Map<String, Object> get = (Map<String, Object>) data.get("Get");
-                if (get.containsKey("OcorrenciaDetalhadaFlash")) {
-                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhadaFlash");
+                if (get.containsKey("OcorrenciaDetalhada")) {
+                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhada");
                     for (Map<String, Object> ocorrencia : ocorrencias) {
                         Map<String, Object> additional = (Map<String, Object>) ocorrencia.get("_additional");
                         if (additional != null && additional.containsKey("generate")) {
@@ -185,7 +185,7 @@ public class ConsultaIagoService {
     }
 
     public String generateFinalSummaryGemini(String promptUser, String combinedData, List<Map<String, Object>> structuredData, String apiKey) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + apiKey;
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
@@ -239,8 +239,8 @@ public class ConsultaIagoService {
             Map<String, Object> data = (Map<String, Object>) response.getData();
             if (data != null && data.containsKey("Get")) {
                 Map<String, Object> get = (Map<String, Object>) data.get("Get");
-                if (get.containsKey("OcorrenciaDetalhadaFlash")) {
-                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhadaFlash");
+                if (get.containsKey("OcorrenciaDetalhada")) {
+                    List<Map<String, Object>> ocorrencias = (List<Map<String, Object>>) get.get("OcorrenciaDetalhada");
                     for (Map<String, Object> ocorrencia : ocorrencias) {
                         Map<String, Object> structuredEntry = new HashMap<>();
                         structuredEntry.put("crime", ocorrencia.get("crime"));

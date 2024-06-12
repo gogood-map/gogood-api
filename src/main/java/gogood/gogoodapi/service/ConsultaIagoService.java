@@ -25,8 +25,8 @@ public class ConsultaIagoService {
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load();
     private final String apiKey = dotenv.get("GEMINI_KEY");
-    private Integer limit = 200;
-    private Integer endPage = 5;
+    private Integer limit = 100;
+    private Integer endPage = 3;
     private String prePrompt = """
             Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências.
             Forneça uma única resposta de tudo com o que faz mas sentido com esse prompt:

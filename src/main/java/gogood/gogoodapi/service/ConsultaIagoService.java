@@ -25,8 +25,8 @@ public class ConsultaIagoService {
     private WeaviateClient client;
     private final Dotenv dotenv = Dotenv.load();
     private final String apiKey = dotenv.get("GEMINI_KEY");
-    private Integer limit = 100;
-    private Integer endPage = 3;
+    private Integer limit = 300;
+    private Integer endPage = 1;
     private String prePrompt = """
             Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências.
             Forneça uma única resposta de tudo com o que faz mas sentido com esse prompt:
@@ -86,7 +86,7 @@ public class ConsultaIagoService {
     }
 
     public String[] getNearTexts(String promptUser){
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + apiKey;
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
@@ -185,13 +185,13 @@ public class ConsultaIagoService {
     }
 
     public String generateFinalSummaryGemini(String promptUser, String combinedData, List<Map<String, Object>> structuredData, String apiKey) {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=" + apiKey;
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=" + apiKey;
         Map<String, Object> requestBody = new HashMap<>();
         Map<String, Object> contents = new HashMap<>();
         Map<String, Object> parts = new HashMap<>();
 
         String context = "Eu extrai os dados da SSP e coloquei aqui para você.";
-        String prompt = "Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências (ignore um dado caso ele tenha informado não conseguir informações). Forneça uma única resposta de tudo com o que faz mas sentido"
+        String prompt = "Você deve unir todas as respostas fornecidas, mesclar dados duplicados somando suas ocorrências (ignore o dado caso ele tenha informado não conseguir informações, que não foi possivel e que não encontrou). De forma hipotetica, forneça uma única resposta de tudo com o que faz mas sentido"
                 + " Dados combinados: " + combinedData + " Dados estruturados: " + structuredData;
 
         parts.put("text", context + " " + prompt+ "\"");

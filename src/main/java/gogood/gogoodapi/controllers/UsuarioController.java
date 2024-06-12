@@ -10,6 +10,7 @@ import gogood.gogoodapi.service.usuario.dto.UsuarioLogin;
 import gogood.gogoodapi.service.usuario.dto.UsuarioLoginGoogle;
 import gogood.gogoodapi.service.usuario.dto.UsuarioTokenDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/usuarios")
+@Tag(name = "Usuários", description = "Transferir dados de usuários")
 public class UsuarioController {
 
     @Autowired

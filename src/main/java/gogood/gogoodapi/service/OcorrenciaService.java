@@ -14,6 +14,7 @@ import gogood.gogoodapi.repository.QuantidadeOcorrenciaRegiaoRepository;
 import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.utils.Ordenacao;
 import gogood.gogoodapi.utils.PesquisaBinaria;
+import gogood.gogoodapi.utils.StringHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatusCode;
@@ -45,7 +46,7 @@ public class OcorrenciaService {
         QuantidadeOcorrenciaRua[] arrayOcorrenciasRua = new QuantidadeOcorrenciaRua[consulta.size()];
         arrayOcorrenciasRua = consulta.toArray(arrayOcorrenciasRua);
         int indice = PesquisaBinaria.pesquisarQuantidadeOcorrenciasPorRua(
-                arrayOcorrenciasRua, rua
+                arrayOcorrenciasRua, StringHelper.normalizar(rua)
         );
         if (indice == -1) throw new ResponseStatusException(HttpStatusCode.valueOf(404), "Rua não encontrada");
         var dto = OcorrenciaRuaMapper.toDTO(arrayOcorrenciasRua[indice]);

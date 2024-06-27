@@ -6,6 +6,8 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.server.ResponseStatusException;
 
 public class ClientGoogleMaps {
     public static GeoApiContext gerarContextoClient(){
@@ -30,6 +32,10 @@ public class ClientGoogleMaps {
         request.mode(modoTransporte);
         request.destination(destino);
         request.origin(origem);
-        return request.awaitIgnoreError();
+        try {
+            return request.await();
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Não foi possível gerar rota. Detalhe mais a origem/destino ou tente novamente mais tarde");
+        }
     }
 }

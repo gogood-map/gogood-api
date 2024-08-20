@@ -1,6 +1,6 @@
 package gogood.gogoodapi.service;
 
-import gogood.gogoodapi.domain.models.Rota;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.domain.strategy.RotaStrategy;
 import gogood.gogoodapi.utils.Ordenacao;
 

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.domain.models;
+package gogood.gogoodapi.domain.models.usuarios;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import gogood.gogoodapi.domain.DTOS.UsuarioAtualizado;

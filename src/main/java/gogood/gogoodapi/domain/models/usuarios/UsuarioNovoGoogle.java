@@ -1,4 +1,4 @@
-package gogood.gogoodapi.domain.models;
+package gogood.gogoodapi.domain.models.usuarios;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,4 +1,4 @@
-package gogood.gogoodapi.domain.models;
+package gogood.gogoodapi.domain.models.rotas;
 
 import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
 import lombok.AllArgsConstructor;

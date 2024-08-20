@@ -1,8 +1,8 @@
 package gogood.gogoodapi.domain.mappers;
 
 import gogood.gogoodapi.domain.DTOS.UsuarioNovo;
-import gogood.gogoodapi.domain.models.UsuarioNovoGoogle;
-import gogood.gogoodapi.domain.models.Usuarios;
+import gogood.gogoodapi.domain.models.usuarios.UsuarioNovoGoogle;
+import gogood.gogoodapi.domain.models.usuarios.Usuarios;
 import gogood.gogoodapi.service.usuario.dto.UsuarioTokenDto;
 
 public class UsuarioMapper {

@@ -2,7 +2,7 @@ package gogood.gogoodapi.utils;
 
 import gogood.gogoodapi.domain.DTOS.OcorrenciaRuaSimples;
 import gogood.gogoodapi.domain.models.estrutura.ListaObj;
-import gogood.gogoodapi.domain.models.Rota;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 
 import java.util.ArrayList;
 import java.util.Arrays;

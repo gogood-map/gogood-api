@@ -2,7 +2,7 @@ package gogood.gogoodapi.domain.mappers;
 
 import com.google.maps.model.DirectionsLeg;
 import com.google.maps.model.DirectionsResult;
-import gogood.gogoodapi.domain.models.Rota;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.repository.CustomQuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.service.GeocodingService;

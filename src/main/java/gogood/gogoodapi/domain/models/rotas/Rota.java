@@ -1,6 +1,7 @@
-package gogood.gogoodapi.domain.models;
+package gogood.gogoodapi.domain.models.rotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gogood.gogoodapi.domain.models.Etapa;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

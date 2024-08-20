@@ -1,7 +1,7 @@
 package gogood.gogoodapi.service;
 
 import gogood.gogoodapi.domain.DTOS.EnderecoUsuarioDTO;
-import gogood.gogoodapi.domain.models.Usuarios;
+import gogood.gogoodapi.domain.models.usuarios.Usuarios;
 import gogood.gogoodapi.domain.models.endereco.Enderecos;
 import gogood.gogoodapi.domain.models.endereco.EnderecosResponse;
 import gogood.gogoodapi.domain.models.endereco.EnderecosUsuarios;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class EnderecoService {

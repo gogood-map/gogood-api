@@ -1,6 +1,6 @@
 package gogood.gogoodapi.domain.strategy;
 
-import gogood.gogoodapi.domain.models.Rota;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 
 import java.util.List;
 

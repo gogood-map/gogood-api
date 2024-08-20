@@ -6,16 +6,20 @@ import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;
 
 public class ClientGoogleMaps {
     public static GeoApiContext gerarContextoClient(){
+        Dotenv dotenv = Dotenv.load();
+        String googleApiKey = dotenv.get("GOOGLE_API_KEY");
+
         return new GeoApiContext.Builder()
-                .apiKey("AIzaSyA9cd3e1BftlFXFnei_GU-mMQrm8WgH_ko")
+                .apiKey(googleApiKey)
                 .build();
     }
-    //Rotas
     public static DirectionsApiRequest gerarRequestRota(){
         DirectionsApiRequest request = DirectionsApi.newRequest(gerarContextoClient());
         request.alternatives(true);
@@ -23,10 +27,8 @@ public class ClientGoogleMaps {
         request.region("br");
         request.language("pt-BR");
 
-
         return request;
     }
-
     public static DirectionsResult obterRespostaRota(String origem, String destino, TravelMode modoTransporte) {
         DirectionsApiRequest request = gerarRequestRota();
         request.mode(modoTransporte);

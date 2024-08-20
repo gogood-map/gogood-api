@@ -1,7 +1,7 @@
 package gogood.gogoodapi.repository;
 
 
-import gogood.gogoodapi.domain.models.Usuarios;
+import gogood.gogoodapi.domain.models.usuarios.Usuarios;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

@@ -1,11 +1,8 @@
 package gogood.gogoodapi.domain.models.endereco;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import gogood.gogoodapi.domain.models.Usuarios;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.checkerframework.checker.units.qual.C;
 
 import java.util.Date;
 import java.util.Set;

@@ -1,10 +1,7 @@
 package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.DTOS.UsuarioNovo;
-import gogood.gogoodapi.domain.models.UsuarioRegistro;
-import gogood.gogoodapi.domain.models.QuantidadeOcorrenciaRua;
-import gogood.gogoodapi.domain.models.Usuarios;
-import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
+import gogood.gogoodapi.domain.models.usuarios.Usuarios;
 import gogood.gogoodapi.service.OcorrenciaService;
 import gogood.gogoodapi.service.UsuarioService;
 import gogood.gogoodapi.utils.StringHelper;

@@ -3,8 +3,8 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.DTOS.UsuarioAtualizado;
 import gogood.gogoodapi.domain.DTOS.UsuarioNovo;
-import gogood.gogoodapi.domain.models.UsuarioNovoGoogle;
-import gogood.gogoodapi.domain.models.Usuarios;
+import gogood.gogoodapi.domain.models.usuarios.UsuarioNovoGoogle;
+import gogood.gogoodapi.domain.models.usuarios.Usuarios;
 import gogood.gogoodapi.service.UsuarioService;
 import gogood.gogoodapi.service.usuario.dto.UsuarioLogin;
 import gogood.gogoodapi.service.usuario.dto.UsuarioLoginGoogle;

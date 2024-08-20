@@ -16,11 +16,6 @@ import java.util.Map;
 
 @Service
 public class MapService {
-    public final List<MapList> partes = new ArrayList<>();
-
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
-
     public MapList getAndSaveByLocation(Double latitude, Double longitude) {
         JdbcConfig jdbcConfig = new JdbcConfig();
         String sql = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LATITUDE)))) AS distance FROM ocorrencias HAVING distance <= 2";
@@ -60,31 +55,6 @@ public class MapService {
             mapData.add(map);
         }
 
-        salvarListaPorPartes(mapData);
         return ResponseEntity.ok().body("Ok");
-    }
-
-    public void salvarListaPorPartes(List<Map<String, Object>> mapData) {
-        int totalPartes = (mapData.size() + 9999) / 10000;
-
-        for (int parte = 0; parte < totalPartes; parte++) {
-            int start = parte * 10000;
-            int end = Math.min(start + 10000, mapData.size());
-            List<Map<String, Object>> subList = mapData.subList(start, end);
-            MapList mapList = new MapList();
-            mapList.setMapData(subList);
-            mapList.setId("lista" + (parte + 1));
-            partes.add(mapList);
-        }
-        salvarPartesNoRedis();
-    }
-
-    public void salvarPartesNoRedis() {
-        for (MapList item : partes) {
-            String chave = "parte:" + item.getId();
-
-            redisTemplate.opsForValue().set(chave, item);
-        }
-        partes.clear();
     }
 }

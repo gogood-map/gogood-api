@@ -2,7 +2,7 @@ package gogood.gogoodapi.domain.strategy.rotaStrategy;
 
 import com.google.maps.model.TravelMode;
 import gogood.gogoodapi.domain.mappers.RotaMapper;
-import gogood.gogoodapi.domain.models.Rota;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.service.ClientGoogleMaps;
 import gogood.gogoodapi.domain.strategy.RotaStrategy;
 

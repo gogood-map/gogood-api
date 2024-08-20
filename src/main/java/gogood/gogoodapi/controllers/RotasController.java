@@ -2,8 +2,8 @@ package gogood.gogoodapi.controllers;
 
 import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
 import gogood.gogoodapi.domain.mappers.RotaMapper;
-import gogood.gogoodapi.domain.models.Rota;
-import gogood.gogoodapi.domain.models.RotaShareResponse;
+import gogood.gogoodapi.domain.models.rotas.Rota;
+import gogood.gogoodapi.domain.models.rotas.RotaShareResponse;
 import gogood.gogoodapi.service.NavegacaoService;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
@@ -12,7 +12,6 @@ import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
 import gogood.gogoodapi.service.RotasService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

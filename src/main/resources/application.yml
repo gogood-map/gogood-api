@@ -1,15 +1,8 @@
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        data:
-#          r2dbc: DEBUG
-#    io:
-#      r2dbc: DEBUG
-#    reactor: DEBUG
-
-
 spring:
+  cache:
+    redis:
+      ttl:
+        rotasCompartilhadas: 300
   datasource:
     hikari:
       connection-timeout: 30000
@@ -30,8 +23,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
-  cache:
-    type: redis
   jackson:
     serialization:
       write-date-keys-as-timestamps: true

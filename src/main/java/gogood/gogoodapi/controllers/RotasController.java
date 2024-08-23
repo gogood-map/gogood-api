@@ -71,9 +71,9 @@ public class RotasController {
         return ResponseEntity.status(200).body(response);
     }
 
-    @GetMapping("/compartilhar/{id}")
-    public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
-        List<Rota> rota = rotasService.obterRotaCompartilhada(id, rotaMapper);
-        return ResponseEntity.status(200).body(rota);
-    }
+//    @GetMapping("/compartilhar/{id}")
+//    public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
+//        List<Rota> rota = rotasService.obterRotaCompartilhada(id, rotaMapper);
+//        return ResponseEntity.status(200).body(rota);
+//    }
 }

@@ -3,9 +3,11 @@ package gogood.gogoodapi.service;
 import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.domain.strategy.RotaStrategy;
 import gogood.gogoodapi.utils.Ordenacao;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class NavegacaoService {
 
     private RotaStrategy estrategiaRota;

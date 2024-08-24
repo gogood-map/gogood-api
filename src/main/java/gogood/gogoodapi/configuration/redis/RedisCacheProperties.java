@@ -1,4 +1,4 @@
-package gogood.gogoodapi.configuration;
+package gogood.gogoodapi.configuration.redis;
 
 import lombok.Getter;
 import lombok.Setter;

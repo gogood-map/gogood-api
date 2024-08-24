@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/rotas")
@@ -67,13 +68,13 @@ public class RotasController {
 
     @PostMapping("/compartilhar")
     public ResponseEntity<RotaShareResponse> compartilharRota(@RequestBody RotaSharePersist rota){
-        RotaShareResponse response = rotasService.compartilharRota(rota);
+        String id = UUID.randomUUID().toString();
+        RotaShareResponse response = rotasService.processarRotaCompartilhada(id, rota, rotaMapper);
         return ResponseEntity.status(200).body(response);
     }
-
-//    @GetMapping("/compartilhar/{id}")
-//    public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
-//        List<Rota> rota = rotasService.obterRotaCompartilhada(id, rotaMapper);
-//        return ResponseEntity.status(200).body(rota);
-//    }
+    @GetMapping("/compartilhar/{id}")
+    public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
+        List<Rota> response = rotasService.obterRotaCompartilhada(id);
+        return ResponseEntity.status(200).body(response);
+    }
 }

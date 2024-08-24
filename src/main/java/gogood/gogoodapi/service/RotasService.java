@@ -1,41 +1,66 @@
 package gogood.gogoodapi.service;
 
 import gogood.gogoodapi.domain.DTOS.RotaSharePersist;
+import gogood.gogoodapi.domain.enums.TipoTransporteEnum;
+import gogood.gogoodapi.domain.mappers.RotaMapper;
+import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.domain.models.rotas.RotaShareResponse;
+import gogood.gogoodapi.domain.strategy.RotaStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.TransportePublicoStrategy;
+import gogood.gogoodapi.domain.strategy.rotaStrategy.VeiculoStrategy;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.List;
 
 @Service
 public class RotasService {
-    @Cacheable(value = "rotasCompartilhadas", unless = "#result == null")
-    public RotaShareResponse compartilharRota(RotaSharePersist rota)  {
-        RotaShareResponse response = new RotaShareResponse();
-        String id = UUID.randomUUID().toString();
-        response.setId(id);
-        response.setUrl(id);
-        return response;
+    @Autowired
+    RotasService rotasService;
+    private final NavegacaoService navegacaoService;
+
+    public RotasService(NavegacaoService navegacaoService) {
+        this.navegacaoService = navegacaoService;
     }
 
-//    public List<Rota> obterRotaCompartilhada(String id, RotaMapper rotaMapper) {
-//        Object objRedis = redisTemplate.opsForValue().get("rotasCompartilhadas:" + id);
-//        RotaSharePersist rota = GenericConverter.convert(objRedis, RotaSharePersist.class);
-//        Boolean isRota = TipoTransporteEnum.istipoTransporte(rota.getTipoTransporte());
-//
-//        if (isRota) {
-//            NavegacaoService navegacaoService = new NavegacaoService();
-//            RotaStrategy estrategiaRota = switch (rota.getTipoTransporte().toUpperCase()) {
-//                case "TRANSPORTE_PUBLICO" -> new TransportePublicoStrategy(rotaMapper);
-//                case "BIKE" -> new BicicletaStrategy(rotaMapper);
-//                case "VEICULO" -> new VeiculoStrategy(rotaMapper);
-//                case "A_PE" -> new APeStrategy(rotaMapper);
-//                default -> null;
-//            };
-//            navegacaoService.escolherStrategy(estrategiaRota);
-//            return navegacaoService.montarRotas(rota.getOrigem(), rota.getDestino());
-//        } else {
-//            return null;
-//        }
-//    }
+    public RotaShareResponse processarRotaCompartilhada(String id, RotaSharePersist rota, RotaMapper rotaMapper){
+        List<Rota> rotas = rotasService.compartilharRota(id, rota, rotaMapper);
+        RotaShareResponse rotaShareResponse = new RotaShareResponse();
+        rotaShareResponse.setUrl(id);
+        return rotaShareResponse;
+    }
+
+    @CachePut(value = "rotasCompartilhadas", key = "#id", unless = "#result == null")
+    public List<Rota> compartilharRota(String id, RotaSharePersist rota, RotaMapper rotaMapper)  {
+        Boolean isRota = TipoTransporteEnum.isTipoTransporte(rota.getTipoTransporte());
+
+        if (isRota) {
+            RotaStrategy estrategiaRota = escolherStrategy(rota, rotaMapper);
+
+            navegacaoService.escolherStrategy(estrategiaRota);
+            return navegacaoService.montarRotas(rota.getOrigem(), rota.getDestino());
+        } else {
+            return null;
+        }
+    }
+    private RotaStrategy escolherStrategy(RotaSharePersist rota, RotaMapper rotaMapper) {
+        return switch (rota.getTipoTransporte().toUpperCase()) {
+            case "TRANSPORTE_PUBLICO" -> new TransportePublicoStrategy(rotaMapper);
+            case "BIKE" -> new BicicletaStrategy(rotaMapper);
+            case "VEICULO" -> new VeiculoStrategy(rotaMapper);
+            case "A_PE" -> new APeStrategy(rotaMapper);
+            default -> null;
+        };
+    }
+
+    @Cacheable(value = "rotasCompartilhadas", key = "#id")
+    public List<Rota> obterRotaCompartilhada(String id) {
+        return null;
+    }
+
+
 }

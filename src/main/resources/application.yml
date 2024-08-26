@@ -5,6 +5,7 @@ spring:
     redis:
       ttl:
         rotasCompartilhadas: 300
+        rotas: 300
   datasource:
     hikari:
       connection-timeout: 30000

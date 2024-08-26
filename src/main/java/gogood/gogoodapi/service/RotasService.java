@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class RotasService {
@@ -40,9 +41,7 @@ public class RotasService {
 
         if (isRota) {
             RotaStrategy estrategiaRota = escolherStrategy(rota, rotaMapper);
-
-            navegacaoService.escolherStrategy(estrategiaRota);
-            return navegacaoService.montarRotas(rota.getOrigem(), rota.getDestino());
+            return navegacaoService.montarRotas(rota.getOrigem(), rota.getDestino(), Objects.requireNonNull(estrategiaRota));
         } else {
             return null;
         }

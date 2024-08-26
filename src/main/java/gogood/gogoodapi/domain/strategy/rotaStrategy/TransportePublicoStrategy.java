@@ -14,6 +14,7 @@ public class TransportePublicoStrategy implements RotaStrategy {
 
     public TransportePublicoStrategy(RotaMapper rotaMapper) {
         this.rotaMapper = rotaMapper;
+
     }
 
     @Override

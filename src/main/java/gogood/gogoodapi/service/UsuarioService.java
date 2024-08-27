@@ -127,4 +127,32 @@ public class UsuarioService {
         repository.save(usuario.get());
 
     }
+
+    public void atualizarFoto(int id, byte[] foto) {
+        Optional<Usuarios> usuario = repository.findById(id);
+        if (usuario.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Usuário não encontrado");
+        }
+
+        usuario.get().setFoto(foto);
+        repository.save(usuario.get());
+    }
+
+    public byte[] getFoto(int id) {
+        Optional<Usuarios> usuario = repository.findById(id);
+        if (usuario.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Usuário não encontrado");
+        }
+
+        return usuario.get().getFoto();
+    }
+
+    public Usuarios getById(Integer id) {
+        Optional<Usuarios> usuario = repository.findById(id);
+        if (usuario.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Usuário não encontrado");
+        }
+
+        return usuario.get();
+    }
 }

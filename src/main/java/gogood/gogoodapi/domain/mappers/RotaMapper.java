@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class RotaMapper {
@@ -30,24 +32,15 @@ public class RotaMapper {
     }
 
     public List<Rota> toRota(DirectionsResult result) {
+        return Arrays.stream(result.routes).limit(3).map(directionsRoute -> {
+                    var resultadoRotaGoogleRota = directionsRoute.legs[0];
+                    Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
+                    rotaAtual.setPolyline(directionsRoute.overviewPolyline.getEncodedPath());
+                    definirLogradouros(rotaAtual);
 
-
-        List<Rota> rotas = new ArrayList<>();
-
-        for (int i = 0; i < result.routes.length && i < 3; i++) {
-            var resultadoGoogle = result.routes[i];
-            var resultadoRotaGoogleRota = resultadoGoogle.legs[0];
-
-            rotas.add(transformarRota(resultadoRotaGoogleRota));
-
-            Rota rotaAtual = rotas.get(i);
-            rotaAtual.setPolyline(resultadoGoogle.overviewPolyline.getEncodedPath());
-
-
-            definirLogradouros(rotaAtual);
-        }
-
-        return rotas;
+                    return rotaAtual;
+                })
+                .collect(Collectors.toList());
     }
 
     private Rota transformarRota(DirectionsLeg directionsLeg) {

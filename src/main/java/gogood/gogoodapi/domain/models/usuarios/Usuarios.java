@@ -1,5 +1,6 @@
 package gogood.gogoodapi.domain.models.usuarios;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import gogood.gogoodapi.domain.DTOS.UsuarioAtualizado;
 import gogood.gogoodapi.domain.models.endereco.Enderecos;
@@ -31,6 +32,9 @@ public class Usuarios {
     private LocalDate created_at;
     private String genero;
     private String google_id;
+    @Lob
+    @JsonIgnore
+    private byte[] foto;
 
     @OneToMany(mappedBy = "usuarios", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference

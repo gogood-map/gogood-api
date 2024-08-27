@@ -8,15 +8,15 @@ spring:
         rotas: 300
   datasource:
     hikari:
-      connection-timeout: 30000
-      idle-timeout: 600000
-      max-lifetime: 1800000
-      maximum-pool-size: 10
       minimum-idle: 5
       validation-timeout: 5000
       leak-detection-threshold: 60000
       connection-test-query: SELECT 1
       keepalive-time: 300000
+      max-lifetime: 1800000
+      idle-timeout: 600000
+      connection-timeout: 30000
+      maximum-pool-size: 10
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${JDBC_URL}
     username: ${JDBC_USERNAME}

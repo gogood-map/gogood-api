@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,15 +28,17 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-
     @Operation(summary = "Obter todos os usuários", description = "Retorna uma lista com todos os usuários cadastrados")
     @GetMapping
     public ResponseEntity<Iterable<Usuarios>> get() {
         Iterable<Usuarios> usuarios = usuarioService.get();
         return ResponseEntity.status(HttpStatus.OK).body(usuarios);
     }
-
-
+    @GetMapping("/{id}")
+    public ResponseEntity<Usuarios> get(@PathVariable Integer id){
+        Usuarios usuario = usuarioService.getById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
     @PostMapping("/cadastro")
     public ResponseEntity<UsuarioTokenDto> criar(@RequestBody @Valid UsuarioNovo usuarioNovo){
 
@@ -83,8 +86,15 @@ public class UsuarioController {
         usuarioService.update(id, usuarioAtualizado);
         return ResponseEntity.status(204).build();
     }
-
-
-
+    @PostMapping("/foto")
+    public ResponseEntity<Void> atualizarFoto(@RequestParam("id") int id, @RequestPart("foto") byte[] foto){
+        usuarioService.atualizarFoto(id, foto);
+        return ResponseEntity.status(204).build();
+    }
+    @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getFoto(@PathVariable int id) {
+        byte[] foto = usuarioService.getFoto(id);
+        return ResponseEntity.ok(foto);
+    }
 
 }

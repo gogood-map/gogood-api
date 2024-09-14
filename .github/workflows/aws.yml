@@ -106,3 +106,25 @@ jobs:
         service: ${{ secrets.ECS_SERVICE }}
         cluster: ${{ secrets.ECS_CLUSTER }}
         wait-for-service-stability: true
+
+    - name: Access Private VM through Public VM
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.PUBLIC_VM_HOST }}
+        username: ${{ secrets.PUBLIC_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.PUBLIC_VM_PORT }}
+        script: |
+          # Acessar a VM privada a partir da pública
+          ssh -i /home/ubuntu/.ssh/gogoodkey.pem ${{ secrets.PRIVATE_VM_USERNAME }}@${{ secrets.PRIVATE_VM_HOST }} << 'EOF'
+            # Comandos para rodar na VM privada
+            cd /home/gogood/java-app/
+            # Atualizar JAR e rodar aplicação
+            sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+            sudo mv /home/gogood/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar /home/gogood/gogood-jar/
+            sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+            set -a
+            source /home/gogood/gogood-jar/.env
+            set +a
+            nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &
+          EOF

@@ -72,7 +72,7 @@ jobs:
       with:
         host: ${{ secrets.AWS_VM_HOST }}
         username: ${{ secrets.AWS_VM_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         source: "target/*.jar"
         target: "/home/gogood/java-app"
@@ -82,7 +82,7 @@ jobs:
       with:
         host: ${{ secrets.AWS_VM_HOST }}
         username: ${{ secrets.AWS_VM_USERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         script: |
           # Remover o JAR antigo se existir

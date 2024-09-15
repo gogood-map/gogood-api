@@ -87,3 +87,4 @@ jobs:
         script: |
           sudo chmod +x /home/ubuntu/script.sh
           sudo /home/ubuntu/script.sh
+

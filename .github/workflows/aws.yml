@@ -44,8 +44,8 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         default_bump: patch
-        initial_version: '1.0.0' # Sets the initial version if no tags exist
-        release_branches: main  # Ensures tags are only pushed on the main branch
+        initial_version: '1.0.0'
+        release_branches: main
 
     - name: Upload Artifact
       id: upload-artifact
@@ -67,6 +67,16 @@ jobs:
         name: application
         path: target/
 
+    - name: Upload script to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.AWS_VM_HOST }}
+        username: ${{ secrets.AWS_VM_USERNAME }}
+        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AWS_VM_PORT }}
+        source: "./scripts/script.sh"
+        target: "/home/gogood/script.sh"
+
     - name: Deploy to Azure VM
       uses: appleboy/scp-action@v0.1.7
       with:
@@ -77,7 +87,7 @@ jobs:
         source: "target/*.jar"
         target: "/home/gogood/java-app"
 
-    - name: Move Java App to File Gogood
+    - name: Execute script on VM
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.AWS_VM_HOST }}
@@ -85,15 +95,5 @@ jobs:
         key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         script: |
-          # Remover o JAR antigo se existir
-          sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
-          # Mover o novo JAR para o diretório correto
-          sudo mv /home/gogood/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar /home/gogood/gogood-jar/
-          # Certificar que o novo JAR tem permissões corretas
-          sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
-          # Carregar variáveis de ambiente do arquivo .env
-          set -a
-          source /home/gogood/gogood-jar/.env
-          set +a
-          # Iniciar a aplicação
-          nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &
+          sudo chmod +x /home/gogood/script.sh
+          sudo /home/gogood/script.sh

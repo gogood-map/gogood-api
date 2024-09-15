@@ -66,17 +66,7 @@ jobs:
       with:
         name: application
         path: target/
-
-    - name: Upload script to server
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.AWS_VM_HOST }}
-        username: ${{ secrets.AWS_VM_USERNAME }}
-        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
-        port: ${{ secrets.AWS_VM_PORT }}
-        source: "./scripts/script.sh"
-        target: "/home/gogood/script.sh"
-
+        
     - name: Deploy to Azure VM
       uses: appleboy/scp-action@v0.1.7
       with:

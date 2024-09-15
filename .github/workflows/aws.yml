@@ -75,7 +75,7 @@ jobs:
         key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         source: "target/*.jar"
-        target: "/home/gogood/java-app"
+        target: "/home/ubuntu/java-app"
 
     - name: Execute script on VM
       uses: appleboy/ssh-action@v1.0.3
@@ -85,5 +85,5 @@ jobs:
         key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         script: |
-          sudo chmod +x /home/gogood/script.sh
-          sudo /home/gogood/script.sh
+          sudo chmod +x /home/ubuntu/script.sh
+          sudo /home/ubuntu/script.sh

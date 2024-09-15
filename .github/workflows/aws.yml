@@ -1,4 +1,4 @@
-name: Java CI with Maven and AWS Deployment
+name: Java CI with Maven and Auto Tagging
 
 on:
   push:
@@ -44,8 +44,8 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         default_bump: patch
-        initial_version: '1.0.0'
-        release_branches: main
+        initial_version: '1.0.0' # Sets the initial version if no tags exist
+        release_branches: main  # Ensures tags are only pushed on the main branch
 
     - name: Upload Artifact
       id: upload-artifact
@@ -61,70 +61,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-
     - name: Download Artifacts
       uses: actions/download-artifact@v4
       with:
         name: application
         path: target/
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
+    - name: Deploy to Azure VM
+      uses: appleboy/scp-action@v0.1.7
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ secrets.AWS_REGION }}
+        host: ${{ secrets.AWS_VM_HOST }}
+        username: ${{ secrets.AWS_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AWS_VM_PORT }}
+        source: "target/*.jar"
+        target: "/home/gogood/java-app"
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Build, tag, and push image to Amazon ECR
-      id: build-image
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: ${{ secrets.ECS_TASK_DEFINITION }}
-        container-name: ${{ secrets.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}
-
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ secrets.ECS_SERVICE }}
-        cluster: ${{ secrets.ECS_CLUSTER }}
-        wait-for-service-stability: true
-
-    - name: Access Private VM through Public VM
+    - name: Move Java App to File Gogood
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.PUBLIC_VM_HOST }}
-        username: ${{ secrets.PUBLIC_VM_USERNAME }}
+        host: ${{ secrets.AWS_VM_HOST }}
+        username: ${{ secrets.AWS_VM_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.PUBLIC_VM_PORT }}
+        port: ${{ secrets.AWS_VM_PORT }}
         script: |
-          # Acessar a VM privada a partir da pública
-          ssh -i /home/ubuntu/.ssh/gogoodkey.pem ${{ secrets.PRIVATE_VM_USERNAME }}@${{ secrets.PRIVATE_VM_HOST }} << 'EOF'
-            # Comandos para rodar na VM privada
-            cd /home/gogood/java-app/
-            # Atualizar JAR e rodar aplicação
-            sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
-            sudo mv /home/gogood/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar /home/gogood/gogood-jar/
-            sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
-            set -a
-            source /home/gogood/gogood-jar/.env
-            set +a
-            nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &
-          EOF
+          # Remover o JAR antigo se existir
+          sudo rm -f /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Mover o novo JAR para o diretório correto
+          sudo mv /home/gogood/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar /home/gogood/gogood-jar/
+          # Certificar que o novo JAR tem permissões corretas
+          sudo chmod +x /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar
+          # Carregar variáveis de ambiente do arquivo .env
+          set -a
+          source /home/gogood/gogood-jar/.env
+          set +a
+          # Iniciar a aplicação
+          nohup sudo java -jar /home/gogood/gogood-jar/gogood-api-0.0.1-SNAPSHOT.jar > /home/gogood/gogood-jar/app.log 2>&1 &

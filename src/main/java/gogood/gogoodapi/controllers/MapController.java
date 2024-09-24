@@ -3,6 +3,7 @@ package gogood.gogoodapi.controllers;
 import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.MapList;
 import gogood.gogoodapi.configuration.JdbcConfig;
+import gogood.gogoodapi.domain.models.Ocorrencia;
 import gogood.gogoodapi.service.MapService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,7 +37,7 @@ public class MapController {
     }
     @Operation(summary = "Obter dados de ocorrências por localização", description = "Obtém os dados de ocorrências do banco de dados por localização")
     @GetMapping("/local/{latitude}/{longitude}")
-    public MapList getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
+    public List<Ocorrencia> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
         return mapService.getAndSaveByLocation(latitude, longitude);
     }
 

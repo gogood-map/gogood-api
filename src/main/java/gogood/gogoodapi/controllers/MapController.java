@@ -31,13 +31,13 @@ public class MapController {
     private MapService mapService;
     @Operation(summary = "Obter dados de ocorrências", description = "Obtém os dados de ocorrências do banco de dados")
     @GetMapping
-    public ResponseEntity<String> get() {
-        ResponseEntity<String> response = mapService.getDadosOcorrencia();
-        return response;
+    public ResponseEntity<Map<String, Object>> get() {
+        Map<String, Object> response = mapService.getDadosOcorrencia();
+        return ResponseEntity.ok(response);
     }
     @Operation(summary = "Obter dados de ocorrências por localização", description = "Obtém os dados de ocorrências do banco de dados por localização")
     @GetMapping("/local/{latitude}/{longitude}")
-    public List<Ocorrencia> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
+    public Map<String, Object> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
         return mapService.getAndSaveByLocation(latitude, longitude);
     }
 

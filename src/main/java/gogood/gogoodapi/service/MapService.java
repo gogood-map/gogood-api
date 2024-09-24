@@ -22,44 +22,22 @@ public class MapService {
     @Autowired
     private MapRepository mapRepository;
 
-    public List<Ocorrencia> getAndSaveByLocation(Double latitude, Double longitude) {
+    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude) {
         Point localizacao = new Point(longitude, latitude);
-        Distance distancia = new Distance(2, Metrics.KILOMETERS);
+        Distance distancia = new Distance(5, Metrics.KILOMETERS);
+        Map<String, Object> response = new HashMap<>();
+        List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+        response.put("qtdOcorrencias", ocorrencias.size());
+        response.put("ocorrencias", ocorrencias);
 
-
-//        MapList mapList = new MapList();
-//        List<Map<String, Object>> mapData = new ArrayList<>();
-//
-//        for (MapData mapa : resultado) {
-//            Map<String, Object> map = new HashMap<>();
-//            map.put("longitude", mapa.getLongitude());
-//            map.put("latitude", mapa.getLatitude());
-//            map.put("id", mapa.getId());
-//            map.put("ano_ocorrencia", mapa.getAno_ocorrencia());
-//            mapData.add(map);
-//        }
-//
-//        mapList.setMapData(mapData);
-//        mapList.setId("listaLocalizacao");
-
-        return mapRepository.findByLocalizacaoNear(localizacao, distancia);;
+        return response;
     }
-    public ResponseEntity<String> getDadosOcorrencia() {
-        JdbcConfig jdbcConfig = new JdbcConfig();
-        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-                SELECT * FROM ocorrencias
-                 """, new BeanPropertyRowMapper<>(MapData.class));
+    public Map<String, Object> getDadosOcorrencia() {
+        Map<String, Object> response = new HashMap<>();
+        List<Ocorrencia> ocorrencias = mapRepository.findAll();
+        response.put("qtdOcorrencias", ocorrencias.size());
+        response.put("ocorrencias", ocorrencias);
 
-        List<Map<String, Object>> mapData = new ArrayList<>();
-
-        for (MapData mapa : resultado) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("longitude", mapa.getLongitude());
-            map.put("latitude", mapa.getLatitude());
-            map.put("id", mapa.getId());
-            mapData.add(map);
-        }
-
-        return ResponseEntity.ok().body("Ok");
+        return response;
     }
 }

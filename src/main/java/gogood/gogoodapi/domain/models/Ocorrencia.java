@@ -6,9 +6,6 @@ import lombok.Data;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.data.mongodb.core.mapping.MongoId;
-
-import java.time.LocalDate;
 @Data
 @Document(value = "ocorrencias-detalhadas")
 public class Ocorrencia {
@@ -35,7 +32,8 @@ public class Ocorrencia {
     @Field("data_ocorrencia")
     private String dataOcorrencia;
 
-    private String periodo;
+    @Field("data_abertura_bo")
+    private String dataAberturaBo;
 
     private Point localizacao;
 

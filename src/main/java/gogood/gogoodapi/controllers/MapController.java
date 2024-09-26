@@ -40,5 +40,9 @@ public class MapController {
     public Map<String, Object> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
         return mapService.getAndSaveByLocation(latitude, longitude);
     }
+    @GetMapping("/buscaOcorrencia/{latitude}/{longitude}")
+    public Map<String, Object> searchRouteOcorrencias(@PathVariable Double latitude, @PathVariable Double longitude) {
+        return mapService.searchRouteOcorrencias(latitude, longitude);
+    }
 
 }

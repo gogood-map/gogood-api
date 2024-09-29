@@ -8,10 +8,11 @@ import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +30,7 @@ public class MapService {
 
         return response;
     }
+
     public Map<String, Object> getDadosOcorrencia() {
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findAll();
@@ -37,12 +39,15 @@ public class MapService {
 
         return response;
     }
+
     public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude) {
         Point localizacao = new Point(longitude, latitude);
         Distance distancia = new Distance(0.5, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
         List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
+
+        String mes = getMes(ocorrencias);
 
         response.put("qtdOcorrencias", ocorrencias.size());
         response.put("ocorrencias", ocorrencias);
@@ -71,6 +76,22 @@ public class MapService {
                     return crimeInfo;
                 })
                 .collect(Collectors.toList());
+    }
+
+    public String getMes(List<Ocorrencia> ocorrencias) {
+        Locale locale = new Locale("pt", "BR");
+        Map<String, Object> response = new HashMap<>();
+
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            Map<String, Object> crimeData = new HashMap<>();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDate data = LocalDate.parse(ocorrencia.getDataOcorrencia().substring(0, 10));
+            String mes = data.getMonth().getDisplayName(java.time.format.TextStyle.FULL, locale);
+            if (!crimeData.containsKey(mes)) {
+                crimeData.put(mes, ++);
+            }
+        }
+        return null;
     }
 
 }

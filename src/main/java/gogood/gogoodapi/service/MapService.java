@@ -8,10 +8,10 @@ import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,11 +47,12 @@ public class MapService {
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
         List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
 
-        String mes = getMes(ocorrencias);
+        Map<String, Integer> mes = getMes(ocorrencias);
 
         response.put("qtdOcorrencias", ocorrencias.size());
         response.put("ocorrencias", ocorrencias);
         response.put("top5Ocorrencias", top5Ocorrencias);
+        response.put("mesOcorrencias", mes);
 
         return response;
     }
@@ -78,20 +79,30 @@ public class MapService {
                 .collect(Collectors.toList());
     }
 
-    public String getMes(List<Ocorrencia> ocorrencias) {
-        Locale locale = new Locale("pt", "BR");
-        Map<String, Object> response = new HashMap<>();
+    public Map<String, Integer> getMes(List<Ocorrencia> ocorrencias) {
+        Map<String, Integer> crimeData = new HashMap<>();
+        Locale locale = Locale.forLanguageTag("pt-BR");
+        DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         for (Ocorrencia ocorrencia : ocorrencias) {
-            Map<String, Object> crimeData = new HashMap<>();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            LocalDate data = LocalDate.parse(ocorrencia.getDataOcorrencia().substring(0, 10));
-            String mes = data.getMonth().getDisplayName(java.time.format.TextStyle.FULL, locale);
-            if (!crimeData.containsKey(mes)) {
-                crimeData.put(mes, ++);
+            String inputData = ocorrencia.getDataOcorrencia();
+            try {
+                LocalDate data;
+                if (inputData.contains(" ")) {
+                    ZonedDateTime zonedDateTime = ZonedDateTime.parse(inputData, fullFormatter);
+                    data = zonedDateTime.toLocalDate();
+                } else {
+                    data = LocalDate.parse(inputData, dateFormatter);
+                }
+
+                String mes = data.getMonth().getDisplayName(java.time.format.TextStyle.FULL, locale);
+                crimeData.merge(mes, 1, Integer::sum);
+            } catch (Exception e) {
+                System.err.println("Failed to parse date: " + e.getMessage() + " from input: " + inputData);
             }
         }
-        return null;
+        return crimeData;
     }
 
 }

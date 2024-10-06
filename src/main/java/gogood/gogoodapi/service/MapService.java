@@ -57,6 +57,15 @@ public class MapService {
         return response;
     }
 
+    public List<Ocorrencia> getOcorrenciasAcrossRoute(Double latitude, Double longitude) {
+        Point localizacao = new Point(longitude, latitude);
+        Distance distancia = new Distance(0.1, Metrics.KILOMETERS);
+        Map<String, Object> response = new HashMap<>();
+
+        return mapRepository.findByLocalizacaoNear(localizacao, distancia);
+    }
+
+
     public List<Map<String, Object>> getTop5Ocorrencias(List<Ocorrencia> ocorrencias) {
         List<String> topCrimes = new ArrayList<>();
         for (Ocorrencia ocorrencia : ocorrencias) {

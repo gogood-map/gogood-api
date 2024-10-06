@@ -11,14 +11,12 @@ import gogood.gogoodapi.service.GeocodingService;
 import gogood.gogoodapi.service.MapService;
 import gogood.gogoodapi.utils.DecoderPolyline;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Service
 public class RotaMapper {
@@ -42,7 +40,7 @@ public class RotaMapper {
                     var resultadoRotaGoogleRota = directionsRoute.legs[0];
                     Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
                     rotaAtual.setPolyline(directionsRoute.overviewPolyline.getEncodedPath());
-                    definirPontosDaRota(rotaAtual);
+                    rotaAtual.setOcorrencias(definirPontosDaRota(rotaAtual));
                     definirLogradouros(rotaAtual);
 
                     return rotaAtual;
@@ -50,7 +48,7 @@ public class RotaMapper {
                 .collect(Collectors.toList());
     }
 
-    private void definirPontosDaRota(Rota rotaAtual) {
+    private List<Ocorrencia> definirPontosDaRota(Rota rotaAtual) {
         List<double[]> listLoc = DecoderPolyline.decodePolyline(rotaAtual.getPolyline());
         List<MapData> localizacoes = new ArrayList<>();
         for (double[] loc : listLoc) {
@@ -60,13 +58,16 @@ public class RotaMapper {
             localizacoes.add(mapData);
         }
 
-        List<Map<String, Object>> todasOcorrencias = new ArrayList<>();
+        List<Ocorrencia> todasOcorrencias = new ArrayList<>();
         for (MapData mapData : localizacoes) {
-            Map<String, Object> ocorrencias = mapService.searchRouteOcorrencias(mapData.getLatitude(), mapData.getLongitude());
-            todasOcorrencias.add(ocorrencias);
+            List<Ocorrencia> ocorrencias = mapService.getOcorrenciasAcrossRoute(mapData.getLatitude(), mapData.getLongitude());
+            ocorrencias.forEach(ocorrencia -> {
+                if (!todasOcorrencias.contains(ocorrencia)) {
+                    todasOcorrencias.add(ocorrencia);
+                }
+            });
         }
-        todasOcorrencias = todasOcorrencias.stream().distinct().toList();
-
+        return todasOcorrencias;
     }
 
     private Rota transformarRota(DirectionsLeg directionsLeg) {

@@ -1,23 +1,25 @@
 package gogood.gogoodapi.domain.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Id;
 import lombok.Data;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
-
-import java.time.LocalDate;
+import org.springframework.data.mongodb.core.mapping.Field;
 @Data
 @Document(value = "ocorrencias-detalhadas")
 public class Ocorrencia {
-    @MongoId
-    private String _id;
+    @Id
+    @JsonIgnore
+    private String id;
 
-    private Double lat;
-
-    private Double lng;
+    @Field("num_bo")
+    private String numBo;
 
     private String crime;
 
-    private Integer ano;
+    @Field("tipo_local")
+    private String tipoLocal;
 
     private String rua;
 
@@ -27,8 +29,12 @@ public class Ocorrencia {
 
     private String cidade;
 
-    private LocalDate data_ocorrencia;
+    @Field("data_ocorrencia")
+    private String dataOcorrencia;
 
-    private String periodo;
+    @Field("data_abertura_bo")
+    private String dataAberturaBo;
+
+    private Point localizacao;
 
 }

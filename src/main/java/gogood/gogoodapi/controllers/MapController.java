@@ -37,8 +37,8 @@ public class MapController {
     }
     @Operation(summary = "Obter dados de ocorrências por localização", description = "Obtém os dados de ocorrências do banco de dados por localização")
     @GetMapping("/local/{latitude}/{longitude}")
-    public Map<String, Object> getLocation(@PathVariable Double latitude, @PathVariable Double longitude) {
-        return mapService.getAndSaveByLocation(latitude, longitude);
+    public Map<String, Object> getLocation(@PathVariable Double latitude, @PathVariable Double longitude, @RequestParam Double raio) {
+        return mapService.getAndSaveByLocation(latitude, longitude, raio);
     }
     @GetMapping("/buscaOcorrencia/{latitude}/{longitude}")
     public Map<String, Object> searchRouteOcorrencias(@PathVariable Double latitude, @PathVariable Double longitude) {

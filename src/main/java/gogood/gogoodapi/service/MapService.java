@@ -20,9 +20,9 @@ public class MapService {
     @Autowired
     private MapRepository mapRepository;
 
-    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude) {
+    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
-        Distance distancia = new Distance(5, Metrics.KILOMETERS);
+        Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
         response.put("qtdOcorrencias", ocorrencias.size());

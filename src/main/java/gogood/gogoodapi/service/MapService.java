@@ -1,8 +1,10 @@
 package gogood.gogoodapi.service;
 
+import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.Ocorrencia;
 import gogood.gogoodapi.repository.MapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -40,17 +42,22 @@ public class MapService {
         return response;
     }
 
+    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude")
     public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude) {
         Point localizacao = new Point(longitude, latitude);
         Distance distancia = new Distance(0.5, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+        List<MapData> ocorrenciasLatLng = new ArrayList<>();
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            MapData data = new MapData(ocorrencia.getLocalizacao().getX(), ocorrencia.getLocalizacao().getY());
+            ocorrenciasLatLng.add(data);
+        }
         List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
-
         Map<String, Integer> mes = getMes(ocorrencias);
 
         response.put("qtdOcorrencias", ocorrencias.size());
-        response.put("ocorrencias", ocorrencias);
+        response.put("ocorrencias", ocorrenciasLatLng);
         response.put("top5Ocorrencias", top5Ocorrencias);
         response.put("mesOcorrencias", mes);
 

@@ -27,8 +27,14 @@ public class MapService {
         Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+
+        Double[][] ocorrenciasLatLng = new Double[ocorrencias.size()][2];
+        for (int i = 0; i<ocorrencias.size(); i++) {
+            ocorrenciasLatLng[i][0] = ocorrencias.get(i).getLocalizacao().getX();
+            ocorrenciasLatLng[i][1] = ocorrencias.get(i).getLocalizacao().getY();
+        }
         response.put("qtdOcorrencias", ocorrencias.size());
-        response.put("ocorrencias", ocorrencias);
+        response.put("coordenadasOcorrencias", ocorrenciasLatLng);
 
         return response;
     }
@@ -43,21 +49,17 @@ public class MapService {
     }
 
     @Cacheable(value = "ocorrencias", key = "#latitude + #longitude")
-    public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude) {
+    public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
-        Distance distancia = new Distance(0.5, Metrics.KILOMETERS);
+        Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
-        List<MapData> ocorrenciasLatLng = new ArrayList<>();
-        for (Ocorrencia ocorrencia : ocorrencias) {
-            MapData data = new MapData(ocorrencia.getLocalizacao().getX(), ocorrencia.getLocalizacao().getY());
-            ocorrenciasLatLng.add(data);
-        }
+
         List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
         Map<String, Integer> mes = getMes(ocorrencias);
 
         response.put("qtdOcorrencias", ocorrencias.size());
-        response.put("ocorrencias", ocorrenciasLatLng);
+
         response.put("top5Ocorrencias", top5Ocorrencias);
         response.put("mesOcorrencias", mes);
 

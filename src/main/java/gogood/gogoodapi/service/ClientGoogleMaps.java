@@ -1,8 +1,6 @@
 package gogood.gogoodapi.service;
 
-import com.google.maps.DirectionsApi;
-import com.google.maps.DirectionsApiRequest;
-import com.google.maps.GeoApiContext;
+import com.google.maps.*;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.TravelMode;
 import com.google.maps.model.Unit;
@@ -20,6 +18,7 @@ public class ClientGoogleMaps {
                 .apiKey(googleApiKey)
                 .build();
     }
+
     public static DirectionsApiRequest gerarRequestRota(){
         DirectionsApiRequest request = DirectionsApi.newRequest(gerarContextoClient());
         request.alternatives(true);

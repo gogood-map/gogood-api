@@ -95,4 +95,4 @@ jobs:
         key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
         port: 22
         source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
-        target: "/home/ubuntu/private-vm-app"
+        target: "/home/ubuntu/gogood"

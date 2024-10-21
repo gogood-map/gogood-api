@@ -66,28 +66,11 @@ jobs:
       with:
         name: application
         path: target/
-        
-    - name: Deploy to Azure VM
-      uses: appleboy/scp-action@v0.1.7
-      with:
-        host: ${{ secrets.AWS_VM_HOST }}
-        username: ${{ secrets.AWS_VM_USERNAME }}
-        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
-        port: ${{ secrets.AWS_VM_PORT }}
-        source: "target/*.jar"
-        target: "/home/ubuntu/java-app"
+    
+    - name: Verificar arquivos no diretório de origem
+      run: ls -la /home/ubuntu/java-app/target
 
-    - name: Navigate to SSH directory
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.AWS_VM_HOST }}
-        username: ${{ secrets.AWS_VM_USERNAME }}
-        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
-        port: ${{ secrets.AWS_VM_PORT }}
-        script: |
-          cd /home/ubuntu/.ssh
-
-    - name: Transfer JAR to Private VM using Existing Key
+    - name: Transferir JAR sem tar
       uses: appleboy/scp-action@v0.1.7
       with:
         host: 10.0.0.156
@@ -96,4 +79,5 @@ jobs:
         port: 22
         source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
         target: "/home/ubuntu/gogood/"
-        tar: false
+        overwrite: true  # Permite sobrescrever arquivos no destino
+        rm: false  # Não remove arquivos após a transferência

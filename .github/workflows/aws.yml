@@ -87,16 +87,6 @@ jobs:
         script: |
           cd /home/ubuntu/.ssh
 
-    - name: Create target directory on Private VM
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: 10.0.0.156
-        username: ubuntu
-        key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
-        port: 22
-        script: |
-          mkdir -p /home/ubuntu/private-vm-app
-
     - name: Transfer JAR to Private VM using Existing Key
       uses: appleboy/scp-action@v0.1.7
       with:

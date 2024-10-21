@@ -94,5 +94,5 @@ jobs:
         username: ubuntu
         key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
         port: 22
-        source: "/home/ubuntu/java-app/*.jar"
-        target: "/home/ubuntu/private-vm-app"
+        source: "/home/ubuntu/java-app/target/*.jar"
+        target: "/home/ubuntu/gogood"

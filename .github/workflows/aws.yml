@@ -66,18 +66,25 @@ jobs:
       with:
         name: application
         path: target/
-
-    - name: Verificar arquivos no diretório de artefatos baixados
-      run: ls -la ./target  # Verifique o diretório correto onde os arquivos foram baixados
+        
+    - name: Deploy to Azure VM
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.AWS_VM_HOST }}
+        username: ${{ secrets.AWS_VM_USERNAME }}
+        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AWS_VM_PORT }}
+        source: "target/*.jar"
+        target: "/home/ubuntu/java-app"
 
     - name: Transferir JAR sem tar
       uses: appleboy/scp-action@v0.1.7
       with:
         host: 10.0.0.156
         username: ubuntu
-        key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
+        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: 22
-        source: "./target/gogood-api-0.0.1-SNAPSHOT.jar"  # Certifique-se de que o caminho seja correto
+        source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
         target: "/home/ubuntu/gogood/"
         overwrite: true
         rm: false

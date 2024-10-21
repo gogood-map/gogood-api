@@ -66,9 +66,9 @@ jobs:
       with:
         name: application
         path: target/
-    
-    - name: Verificar arquivos no diretório de origem
-      run: ls -la /home/ubuntu/java-app/target
+
+    - name: Verificar arquivos no diretório de artefatos baixados
+      run: ls -la ./target  # Verifique o diretório correto onde os arquivos foram baixados
 
     - name: Transferir JAR sem tar
       uses: appleboy/scp-action@v0.1.7
@@ -77,7 +77,7 @@ jobs:
         username: ubuntu
         key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
         port: 22
-        source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
+        source: "./target/gogood-api-0.0.1-SNAPSHOT.jar"  # Certifique-se de que o caminho seja correto
         target: "/home/ubuntu/gogood/"
-        overwrite: true  # Permite sobrescrever arquivos no destino
-        rm: false  # Não remove arquivos após a transferência
+        overwrite: true
+        rm: false

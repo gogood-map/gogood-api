@@ -87,12 +87,12 @@ jobs:
         script: |
           cd /home/ubuntu/.ssh
 
-    - name: Transfer JAR to Private VM
+    - name: Transfer JAR to Private VM using Existing Key
       uses: appleboy/scp-action@v0.1.7
       with:
         host: 10.0.0.156
         username: ubuntu
-        key: ${{ secrets.PRIVATE_VM_SSH_PRIVATE_KEY }}
+        key_path: "/home/ubuntu/.ssh/gogoodkey.pem"
         port: 22
         source: "/home/ubuntu/java-app/*.jar"
-        target: "/home/ubuntu/gogood"
+        target: "/home/ubuntu/private-vm-app"

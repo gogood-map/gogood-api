@@ -77,7 +77,7 @@ jobs:
         source: "target/*.jar"
         target: "/home/ubuntu/java-app"
 
-    - name: Execute script on VM
+    - name: Navigate to SSH directory
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.AWS_VM_HOST }}
@@ -85,6 +85,14 @@ jobs:
         key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         script: |
-          sudo chmod +x /home/ubuntu/script.sh
-          sudo /home/ubuntu/script.sh
+          cd /home/ubuntu/.ssh
 
+    - name: Transfer JAR to Private VM
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: 10.0.0.156
+        username: ubuntu
+        key: ${{ secrets.PRIVATE_VM_SSH_PRIVATE_KEY }}
+        port: 22
+        source: "/home/ubuntu/java-app/*.jar"
+        target: "/home/ubuntu/gogood"

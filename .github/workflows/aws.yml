@@ -96,3 +96,4 @@ jobs:
         port: 22
         source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
         target: "/home/ubuntu/gogood/"
+        tar: false

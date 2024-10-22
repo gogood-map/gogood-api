@@ -2,6 +2,7 @@ package gogood.gogoodapi.domain.models.rotas;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import gogood.gogoodapi.domain.models.Etapa;
+import gogood.gogoodapi.domain.models.Ocorrencia;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class Rota {
     private List<Etapa> etapas;
     @JsonIgnore
     private Long duracaoSegundos;
+    private List<Ocorrencia> ocorrencias;
 
 
 

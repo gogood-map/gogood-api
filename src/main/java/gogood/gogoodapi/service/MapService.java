@@ -1,60 +1,117 @@
 package gogood.gogoodapi.service;
 
-import gogood.gogoodapi.configuration.JdbcConfig;
-import gogood.gogoodapi.domain.models.MapData;
-import gogood.gogoodapi.domain.models.MapList;
+import gogood.gogoodapi.domain.models.Ocorrencia;
+import gogood.gogoodapi.repository.MapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MapService {
-    public MapList getAndSaveByLocation(Double latitude, Double longitude) {
-        JdbcConfig jdbcConfig = new JdbcConfig();
-        String sql = "SELECT *, (6371 * acos(cos(radians(?)) * cos(radians(LATITUDE)) * cos(radians(LONGITUDE) - radians(?)) + sin(radians(?)) * sin(radians(LATITUDE)))) AS distance FROM ocorrencias HAVING distance <= 2";
+    @Autowired
+    private MapRepository mapRepository;
 
-        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query(sql, new Object[]{latitude, longitude, latitude}, new BeanPropertyRowMapper<>(MapData.class));
+    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude) {
+        Point localizacao = new Point(longitude, latitude);
+        Distance distancia = new Distance(5, Metrics.KILOMETERS);
+        Map<String, Object> response = new HashMap<>();
+        List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+        response.put("qtdOcorrencias", ocorrencias.size());
+        response.put("ocorrencias", ocorrencias);
 
-        MapList mapList = new MapList();
-        List<Map<String, Object>> mapData = new ArrayList<>();
+        return response;
+    }
 
-        for (MapData mapa : resultado) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("longitude", mapa.getLongitude());
-            map.put("latitude", mapa.getLatitude());
-            map.put("id", mapa.getId());
-            map.put("ano_ocorrencia", mapa.getAno_ocorrencia());
-            mapData.add(map);
+    public Map<String, Object> getDadosOcorrencia() {
+        Map<String, Object> response = new HashMap<>();
+        List<Ocorrencia> ocorrencias = mapRepository.findAll();
+        response.put("qtdOcorrencias", ocorrencias.size());
+        response.put("ocorrencias", ocorrencias);
+
+        return response;
+    }
+
+    public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude) {
+        Point localizacao = new Point(longitude, latitude);
+        Distance distancia = new Distance(0.5, Metrics.KILOMETERS);
+        Map<String, Object> response = new HashMap<>();
+        List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+        List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
+
+        Map<String, Integer> mes = getMes(ocorrencias);
+
+        response.put("qtdOcorrencias", ocorrencias.size());
+        response.put("ocorrencias", ocorrencias);
+        response.put("top5Ocorrencias", top5Ocorrencias);
+        response.put("mesOcorrencias", mes);
+
+        return response;
+    }
+
+    public List<Ocorrencia> getOcorrenciasAcrossRoute(Double latitude, Double longitude) {
+        Point localizacao = new Point(longitude, latitude);
+        Distance distancia = new Distance(0.1, Metrics.KILOMETERS);
+        Map<String, Object> response = new HashMap<>();
+
+        return mapRepository.findByLocalizacaoNear(localizacao, distancia);
+    }
+
+
+    public List<Map<String, Object>> getTop5Ocorrencias(List<Ocorrencia> ocorrencias) {
+        List<String> topCrimes = new ArrayList<>();
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            topCrimes.add(ocorrencia.getCrime());
+        }
+        Map<String, Integer> contagemCrimes = new HashMap<>();
+        for (String crime : topCrimes) {
+            contagemCrimes.put(crime, contagemCrimes.getOrDefault(crime, 0) + 1);
         }
 
-        mapList.setMapData(mapData);
-        mapList.setId("listaLocalizacao");
-
-        return mapList;
+        return contagemCrimes.entrySet().stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue())) // Ordena por valor (número de ocorrências)
+                .limit(5)
+                .map(entry -> {
+                    Map<String, Object> crimeInfo = new HashMap<>();
+                    crimeInfo.put("crime", entry.getKey());
+                    crimeInfo.put("qtdOcorrido", entry.getValue());
+                    return crimeInfo;
+                })
+                .collect(Collectors.toList());
     }
-    public ResponseEntity<String> getDadosOcorrencia() {
-        JdbcConfig jdbcConfig = new JdbcConfig();
-        List<MapData> resultado = jdbcConfig.getConexaoDoBanco().query("""
-                SELECT * FROM ocorrencias
-                 """, new BeanPropertyRowMapper<>(MapData.class));
 
-        List<Map<String, Object>> mapData = new ArrayList<>();
+    public Map<String, Integer> getMes(List<Ocorrencia> ocorrencias) {
+        Map<String, Integer> crimeData = new HashMap<>();
+        Locale locale = Locale.forLanguageTag("pt-BR");
+        DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        for (MapData mapa : resultado) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("longitude", mapa.getLongitude());
-            map.put("latitude", mapa.getLatitude());
-            map.put("id", mapa.getId());
-            mapData.add(map);
+        for (Ocorrencia ocorrencia : ocorrencias) {
+            String inputData = ocorrencia.getDataOcorrencia();
+            try {
+                LocalDate data;
+                if (inputData.contains(" ")) {
+                    ZonedDateTime zonedDateTime = ZonedDateTime.parse(inputData, fullFormatter);
+                    data = zonedDateTime.toLocalDate();
+                } else {
+                    data = LocalDate.parse(inputData, dateFormatter);
+                }
+
+                String mes = data.getMonth().getDisplayName(java.time.format.TextStyle.FULL, locale);
+                crimeData.merge(mes, 1, Integer::sum);
+            } catch (Exception e) {
+                System.err.println("Failed to parse date: " + e.getMessage() + " from input: " + inputData);
+            }
         }
-
-        return ResponseEntity.ok().body("Ok");
+        return crimeData;
     }
+
 }

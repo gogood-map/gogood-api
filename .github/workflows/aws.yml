@@ -85,5 +85,5 @@ jobs:
         key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
         port: ${{ secrets.AWS_VM_PORT }}
         script: |
-          chmod +x /home/ubuntu/script-back.sh
+          sudo chmod +x /home/ubuntu/script-back.sh
           sh /home/ubuntu/script-back.sh

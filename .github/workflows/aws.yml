@@ -77,14 +77,13 @@ jobs:
         source: "target/*.jar"
         target: "/home/ubuntu/java-app"
 
-    - name: Transferir JAR sem tar
-      uses: appleboy/scp-action@v0.1.7
+    - name: Move Java App to Docker Container
+      uses: appleboy/ssh-action@v1.0.3
       with:
-        host: 10.0.0.156
-        username: ubuntu
-        key: ${{ secrets.AWS_SSH_PRIVATE_KEY }}
-        port: 22
-        source: "/home/ubuntu/java-app/target/gogood-api-0.0.1-SNAPSHOT.jar"
-        target: "/home/ubuntu/"
-        overwrite: true
-        rm: false
+        host: ${{ secrets.AZURE_VM_HOST }}
+        username: ${{ secrets.AZURE_VM_USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.AZURE_VM_PORT }}
+        script: |
+          chmod +x /home/ubuntu/script-back.sh
+          sh /home/ubuntu/script-back.sh

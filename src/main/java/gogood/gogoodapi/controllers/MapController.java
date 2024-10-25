@@ -22,7 +22,6 @@ import java.util.Map;
 
 @RestController
 @EnableCaching
-@CrossOrigin(origins = "https://gogood.azurewebsites.net")
 @RequestMapping("/consultar")
 @Tag(name = "Mapa", description = "Consultar dados de ocorrências")
 

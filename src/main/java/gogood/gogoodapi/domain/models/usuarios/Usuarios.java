@@ -1,6 +1,7 @@
 package gogood.gogoodapi.domain.models.usuarios;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import gogood.gogoodapi.domain.DTOS.UsuarioAtualizado;
 import gogood.gogoodapi.domain.models.endereco.Enderecos;

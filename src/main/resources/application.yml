@@ -22,9 +22,13 @@ spring:
     username: ${JDBC_USERNAME}
     password: ${JDBC_PASSWORD}
   jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
 
   jackson:
     serialization:

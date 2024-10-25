@@ -1,8 +1,10 @@
 package gogood.gogoodapi.service;
 
+import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.Ocorrencia;
 import gogood.gogoodapi.repository.MapRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
@@ -20,13 +22,19 @@ public class MapService {
     @Autowired
     private MapRepository mapRepository;
 
-    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude) {
+    public Map<String, Object> getAndSaveByLocation(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
-        Distance distancia = new Distance(5, Metrics.KILOMETERS);
+        Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+
+        Double[][] ocorrenciasLatLng = new Double[ocorrencias.size()][2];
+        for (int i = 0; i<ocorrencias.size(); i++) {
+            ocorrenciasLatLng[i][0] = ocorrencias.get(i).getLocalizacao().getX();
+            ocorrenciasLatLng[i][1] = ocorrencias.get(i).getLocalizacao().getY();
+        }
         response.put("qtdOcorrencias", ocorrencias.size());
-        response.put("ocorrencias", ocorrencias);
+        response.put("coordenadasOcorrencias", ocorrenciasLatLng);
 
         return response;
     }
@@ -40,17 +48,18 @@ public class MapService {
         return response;
     }
 
-    public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude) {
+    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude")
+    public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
-        Distance distancia = new Distance(0.5, Metrics.KILOMETERS);
+        Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         Map<String, Object> response = new HashMap<>();
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
-        List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
 
+        List<Map<String, Object>> top5Ocorrencias = getTop5Ocorrencias(ocorrencias);
         Map<String, Integer> mes = getMes(ocorrencias);
 
         response.put("qtdOcorrencias", ocorrencias.size());
-        response.put("ocorrencias", ocorrencias);
+
         response.put("top5Ocorrencias", top5Ocorrencias);
         response.put("mesOcorrencias", mes);
 

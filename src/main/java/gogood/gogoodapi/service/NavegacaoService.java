@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Service
 public class NavegacaoService {
-//    @Cacheable(value = "rotas", key = "#origem.concat('-').concat(#destino)", unless = "#result == null")
+    @Cacheable(value = "rotas", key = "#origem.concat('-').concat(#destino)", unless = "#result == null")
     public List<Rota> escolherStrategy(String id, RotaStrategy estrategiaRota, String origem, String destino) {
         return montarRotas(origem, destino, estrategiaRota);
     }

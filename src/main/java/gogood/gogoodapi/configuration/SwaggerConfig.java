@@ -17,7 +17,7 @@ public class SwaggerConfig {
         server.setUrl("https://gogood.brazilsouth.cloudapp.azure.com");
 
         Server serverDev = new Server();
-        serverDev.setUrl("http://localhost:8080");
+        serverDev.setUrl("http://localhost:5050");
         return new OpenAPI().servers(List.of(server, serverDev)).info(new Info().title("GoGood API").version("1.0"));
     }
 }

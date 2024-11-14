@@ -41,6 +41,7 @@ public class RotaMapper {
                     Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
                     rotaAtual.setPolyline(directionsRoute.overviewPolyline.getEncodedPath());
                     rotaAtual.setOcorrencias(definirPontosDaRota(rotaAtual));
+
                     definirLogradouros(rotaAtual);
 
                     return rotaAtual;

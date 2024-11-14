@@ -28,6 +28,7 @@ public class Rota {
     private List<Etapa> etapas;
     @JsonIgnore
     private Long duracaoSegundos;
+    @JsonIgnore
     private List<Ocorrencia> ocorrencias;
 
 

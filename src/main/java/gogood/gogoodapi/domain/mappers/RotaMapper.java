@@ -40,7 +40,7 @@ public class RotaMapper {
                     var resultadoRotaGoogleRota = directionsRoute.legs[0];
                     Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
                     rotaAtual.setPolyline(directionsRoute.overviewPolyline.getEncodedPath());
-                    rotaAtual.setOcorrencias(definirPontosDaRota(rotaAtual));
+//                    rotaAtual.setOcorrencias(definirPontosDaRota(rotaAtual));
 
                     definirLogradouros(rotaAtual);
 
@@ -49,27 +49,27 @@ public class RotaMapper {
                 .collect(Collectors.toList());
     }
 
-    private List<Ocorrencia> definirPontosDaRota(Rota rotaAtual) {
-        List<double[]> listLoc = DecoderPolyline.decodePolyline(rotaAtual.getPolyline());
-        List<MapData> localizacoes = new ArrayList<>();
-        for (double[] loc : listLoc) {
-            MapData mapData = new MapData();
-            mapData.setLatitude(loc[0]);
-            mapData.setLongitude(loc[1]);
-            localizacoes.add(mapData);
-        }
-
-        List<Ocorrencia> todasOcorrencias = new ArrayList<>();
-        for (MapData mapData : localizacoes) {
-            List<Ocorrencia> ocorrencias = mapService.getOcorrenciasAcrossRoute(mapData.getLatitude(), mapData.getLongitude());
-            ocorrencias.forEach(ocorrencia -> {
-                if (!todasOcorrencias.contains(ocorrencia)) {
-                    todasOcorrencias.add(ocorrencia);
-                }
-            });
-        }
-        return todasOcorrencias;
-    }
+//    private List<Ocorrencia> definirPontosDaRota(Rota rotaAtual) {
+//        List<double[]> listLoc = DecoderPolyline.decodePolyline(rotaAtual.getPolyline());
+//        List<MapData> localizacoes = new ArrayList<>();
+//        for (double[] loc : listLoc) {
+//            MapData mapData = new MapData();
+//            mapData.setLatitude(loc[0]);
+//            mapData.setLongitude(loc[1]);
+//            localizacoes.add(mapData);
+//        }
+//
+//        List<Ocorrencia> todasOcorrencias = new ArrayList<>();
+//        for (MapData mapData : localizacoes) {
+//            List<Ocorrencia> ocorrencias = mapService.getOcorrenciasAcrossRoute(mapData.getLatitude(), mapData.getLongitude());
+//            ocorrencias.forEach(ocorrencia -> {
+//                if (!todasOcorrencias.contains(ocorrencia)) {
+//                    todasOcorrencias.add(ocorrencia);
+//                }
+//            });
+//        }
+//        return todasOcorrencias;
+//    }
 
     private Rota transformarRota(DirectionsLeg directionsLeg) {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");

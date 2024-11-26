@@ -4,9 +4,13 @@ import gogood.gogoodapi.domain.models.Coordenada;
 import gogood.gogoodapi.domain.models.Etapa;
 import gogood.gogoodapi.utils.StringHelper;
 import io.github.cdimascio.dotenv.Dotenv;
+import lombok.Getter;
+import lombok.Setter;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +19,9 @@ import java.util.stream.Collectors;
 public class GeocodingService {
 
     private final WebClient webClient;
+
+    @Setter
+    private Boolean testFlag = false;
 
     public GeocodingService(WebClient.Builder webClientBuilder) {
         this.webClient = webClientBuilder.baseUrl("https://api.opencagedata.com").build();
@@ -34,11 +41,49 @@ public class GeocodingService {
 
     private String getLogradouro(Etapa etapa) {
         Coordenada coordenada = etapa.getCoordenadaFinal();
-        String logradouro = fetchLogradouro(coordenada);
+        String logradouro = testFlag ? fetchLogradouroGoogle(coordenada) : fetchLogradouroOpenCage(coordenada);
+        if (logradouro == null) {
+            logradouro = testFlag ? fetchLogradouroOpenCage(coordenada) : fetchLogradouroGoogle(coordenada);
+        }
         return logradouro != null ? logradouro : "Endereço não encontrado";
     }
 
-    private String fetchLogradouro(Coordenada coordenada) {
+    private String fetchLogradouroGoogle(Coordenada coordenada) {
+        Dotenv dotenv = Dotenv.load();
+        String googleApiKey = dotenv.get("GOOGLE_API_KEY");
+        String uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/geocode/json")
+                .queryParam("latlng", coordenada.getLat() + "," + coordenada.getLng())
+                .queryParam("key", googleApiKey)
+                .queryParam("language", "pt-BR")
+                .toUriString();
+
+        String response = webClient.get()
+                .uri(uri)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        if (response != null) {
+            JSONObject jsonResponse = new JSONObject(response);
+            if ("OK".equals(jsonResponse.getString("status"))) {
+                var results = jsonResponse.getJSONArray("results");
+                if (!results.isEmpty()) {
+                    JSONObject firstResult = results.getJSONObject(0);
+                    var addressComponents = firstResult.getJSONArray("address_components");
+
+                    for (int i = 0; i < addressComponents.length(); i++) {
+                        JSONObject component = addressComponents.getJSONObject(i);
+                        if (component.getJSONArray("types").toList().contains("route")) {
+                            return StringHelper.normalizar(component.getString("long_name"));
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private String fetchLogradouroOpenCage(Coordenada coordenada) {
         Dotenv dotenv = Dotenv.load();
         String openCageApiKey = dotenv.get("OPENCAGE_API_KEY");
 
@@ -67,3 +112,4 @@ public class GeocodingService {
         return null;
     }
 }
+

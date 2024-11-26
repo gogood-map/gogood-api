@@ -155,4 +155,14 @@ public class UsuarioService {
 
         return usuario.get();
     }
+
+    public void deletarFoto(int id) {
+        Optional<Usuarios> usuario = repository.findById(id);
+        if (usuario.isEmpty()) {
+            throw new RecursoNaoEncontradoException("Usuário não encontrado");
+        }
+
+        usuario.get().setFoto(null);
+        repository.save(usuario.get());
+    }
 }

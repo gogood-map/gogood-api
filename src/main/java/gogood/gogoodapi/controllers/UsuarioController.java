@@ -91,6 +91,11 @@ public class UsuarioController {
         usuarioService.atualizarFoto(id, foto);
         return ResponseEntity.status(204).build();
     }
+    @DeleteMapping("/foto/{id}")
+    public ResponseEntity<Void> deletarFoto(@PathVariable int id){
+        usuarioService.deletarFoto(id);
+        return ResponseEntity.status(204).build();
+    }
     @GetMapping(value = "/foto/{id}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getFoto(@PathVariable int id) {
         byte[] foto = usuarioService.getFoto(id);

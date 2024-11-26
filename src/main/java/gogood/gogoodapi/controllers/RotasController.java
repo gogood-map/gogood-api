@@ -5,6 +5,7 @@ import gogood.gogoodapi.domain.mappers.RotaMapper;
 import gogood.gogoodapi.domain.models.rotas.Rota;
 import gogood.gogoodapi.domain.models.rotas.RotaShareResponse;
 import gogood.gogoodapi.domain.strategy.RotaStrategy;
+import gogood.gogoodapi.service.GeocodingService;
 import gogood.gogoodapi.service.NavegacaoService;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.APeStrategy;
 import gogood.gogoodapi.domain.strategy.rotaStrategy.BicicletaStrategy;
@@ -30,6 +31,9 @@ public class RotasController {
 
     @Autowired
     private RotasService rotasService;
+
+    @Autowired
+    private GeocodingService geocodingService;
 
     @Autowired
     private NavegacaoService navegacaoService;
@@ -80,5 +84,11 @@ public class RotasController {
     public ResponseEntity<List<Rota>> obterRotaCompartilhada(@PathVariable String id){
         List<Rota> response = rotasService.obterRotaCompartilhada(id);
         return ResponseEntity.status(200).body(response);
+    }
+
+    @PostMapping("/fornecedorFlag")
+    public ResponseEntity<Rota> fornecedorFlag(@RequestParam Boolean flag){
+        geocodingService.setTestFlag(flag);
+        return ResponseEntity.status(200).body(null);
     }
 }

@@ -49,7 +49,7 @@ public class MapService {
         return response;
     }
 
-    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude")
+    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude", unless = "#result == null")
     public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
         Distance distancia = new Distance(raio, Metrics.KILOMETERS);

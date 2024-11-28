@@ -123,12 +123,12 @@ public class MapService {
         return crimeData;
     }
 
-    public List<LatLng> searchRouteOcorrenciasMobile(Double latitude, Double longitude, Double raio) {
+    public List<MapData> searchRouteOcorrenciasMobile(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
         Distance distancia = new Distance(raio, Metrics.KILOMETERS);
         List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
         return ocorrencias.stream()
-                .map(ocorrencia -> new LatLng(
+                .map(ocorrencia -> new MapData(
                         ocorrencia.getLocalizacao().getY(),
                         ocorrencia.getLocalizacao().getX()
                 ))

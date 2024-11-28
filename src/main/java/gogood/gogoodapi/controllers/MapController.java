@@ -45,7 +45,7 @@ public class MapController {
         return mapService.searchRouteOcorrencias(latitude, longitude, raio);
     }
     @GetMapping("/localMobile/{latitude}/{longitude}")
-    public List<LatLng> searchRouteOcorrenciasMobile(
+    public List<MapData> searchRouteOcorrenciasMobile(
             @PathVariable Double latitude,
             @PathVariable Double longitude,
             @RequestParam Double raio) {

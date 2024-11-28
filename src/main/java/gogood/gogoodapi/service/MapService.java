@@ -1,5 +1,6 @@
 package gogood.gogoodapi.service;
 
+import com.google.maps.model.LatLng;
 import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.Ocorrencia;
 import gogood.gogoodapi.repository.MapRepository;
@@ -48,7 +49,7 @@ public class MapService {
         return response;
     }
 
-    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude")
+    @Cacheable(value = "ocorrencias", key = "#latitude + #longitude", unless = "#result == null")
     public Map<String, Object> searchRouteOcorrencias(Double latitude, Double longitude, Double raio) {
         Point localizacao = new Point(longitude, latitude);
         Distance distancia = new Distance(raio, Metrics.KILOMETERS);
@@ -62,7 +63,6 @@ public class MapService {
 
         response.put("top5Ocorrencias", top5Ocorrencias);
         response.put("mesOcorrencias", mes);
-
         return response;
     }
 
@@ -123,4 +123,17 @@ public class MapService {
         return crimeData;
     }
 
+    public List<LatLng> searchRouteOcorrenciasMobile(Double latitude, Double longitude, Double raio) {
+        Point localizacao = new Point(longitude, latitude);
+        Distance distancia = new Distance(raio, Metrics.KILOMETERS);
+        List<Ocorrencia> ocorrencias = mapRepository.findByLocalizacaoNear(localizacao, distancia);
+        return ocorrencias.stream()
+                .map(ocorrencia -> new LatLng(
+                        ocorrencia.getLocalizacao().getY(),
+                        ocorrencia.getLocalizacao().getX()
+                ))
+                .collect(Collectors.toList());
+
+
+    }
 }

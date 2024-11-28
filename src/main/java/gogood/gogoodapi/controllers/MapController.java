@@ -1,5 +1,6 @@
 package gogood.gogoodapi.controllers;
 
+import com.google.maps.model.LatLng;
 import gogood.gogoodapi.domain.models.MapData;
 import gogood.gogoodapi.domain.models.MapList;
 import gogood.gogoodapi.configuration.JdbcConfig;
@@ -42,6 +43,14 @@ public class MapController {
     @GetMapping("/buscaOcorrencia/{latitude}/{longitude}")
     public Map<String, Object> searchRouteOcorrencias(@PathVariable Double latitude, @PathVariable Double longitude, @RequestParam Double raio) {
         return mapService.searchRouteOcorrencias(latitude, longitude, raio);
+    }
+    @GetMapping("/localMobile/{latitude}/{longitude}")
+    public List<LatLng> searchRouteOcorrenciasMobile(
+            @PathVariable Double latitude,
+            @PathVariable Double longitude,
+            @RequestParam Double raio) {
+
+        return mapService.searchRouteOcorrenciasMobile(latitude, longitude, raio);
     }
 
 }

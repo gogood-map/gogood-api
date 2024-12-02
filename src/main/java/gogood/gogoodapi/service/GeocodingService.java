@@ -49,67 +49,77 @@ public class GeocodingService {
     }
 
     private String fetchLogradouroGoogle(Coordenada coordenada) {
-        Dotenv dotenv = Dotenv.load();
-        String googleApiKey = dotenv.get("GOOGLE_API_KEY");
-        String uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/geocode/json")
-                .queryParam("latlng", coordenada.getLat() + "," + coordenada.getLng())
-                .queryParam("key", googleApiKey)
-                .queryParam("language", "pt-BR")
-                .toUriString();
+        try {
+            Dotenv dotenv = Dotenv.load();
+            String googleApiKey = dotenv.get("GOOGLE_API_KEY");
+            String uri = UriComponentsBuilder.fromHttpUrl("https://maps.googleapis.com/maps/api/geocode/json")
+                    .queryParam("latlng", coordenada.getLat() + "," + coordenada.getLng())
+                    .queryParam("key", googleApiKey)
+                    .queryParam("language", "pt-BR")
+                    .toUriString();
 
-        String response = webClient.get()
-                .uri(uri)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+            String response = webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        if (response != null) {
-            JSONObject jsonResponse = new JSONObject(response);
-            if ("OK".equals(jsonResponse.getString("status"))) {
-                var results = jsonResponse.getJSONArray("results");
-                if (!results.isEmpty()) {
-                    JSONObject firstResult = results.getJSONObject(0);
-                    var addressComponents = firstResult.getJSONArray("address_components");
+            if (response != null) {
+                JSONObject jsonResponse = new JSONObject(response);
+                if ("OK".equals(jsonResponse.getString("status"))) {
+                    var results = jsonResponse.getJSONArray("results");
+                    if (!results.isEmpty()) {
+                        JSONObject firstResult = results.getJSONObject(0);
+                        var addressComponents = firstResult.getJSONArray("address_components");
 
-                    for (int i = 0; i < addressComponents.length(); i++) {
-                        JSONObject component = addressComponents.getJSONObject(i);
-                        if (component.getJSONArray("types").toList().contains("route")) {
-                            return StringHelper.normalizar(component.getString("long_name"));
+                        for (int i = 0; i < addressComponents.length(); i++) {
+                            JSONObject component = addressComponents.getJSONObject(i);
+                            if (component.getJSONArray("types").toList().contains("route")) {
+                                return StringHelper.normalizar(component.getString("long_name"));
+                            }
                         }
                     }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar logradouro pelo Google API: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
 
     private String fetchLogradouroOpenCage(Coordenada coordenada) {
-        Dotenv dotenv = Dotenv.load();
-        String openCageApiKey = dotenv.get("OPENCAGE_API_KEY");
+        try {
+            Dotenv dotenv = Dotenv.load();
+            String openCageApiKey = dotenv.get("OPENCAGE_API_KEY");
 
-        String response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/geocode/v1/json")
-                        .queryParam("q", coordenada.getLat() + "," + coordenada.getLng())
-                        .queryParam("key", openCageApiKey)
-                        .queryParam("language", "pt")
-                        .queryParam("pretty", "1")
-                        .build())
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
+            String response = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/geocode/v1/json")
+                            .queryParam("q", coordenada.getLat() + "," + coordenada.getLng())
+                            .queryParam("key", openCageApiKey)
+                            .queryParam("language", "pt")
+                            .queryParam("pretty", "1")
+                            .build())
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        if (response != null) {
-            JSONObject jsonResponse = new JSONObject(response);
-            if (!jsonResponse.getJSONArray("results").isEmpty()) {
-                JSONObject components = jsonResponse.getJSONArray("results").getJSONObject(0).getJSONObject("components");
-                if (components.has("road")) {
-                    return StringHelper.normalizar(components.getString("road"));
+            if (response != null) {
+                JSONObject jsonResponse = new JSONObject(response);
+                if (!jsonResponse.getJSONArray("results").isEmpty()) {
+                    JSONObject components = jsonResponse.getJSONArray("results").getJSONObject(0).getJSONObject("components");
+                    if (components.has("road")) {
+                        return StringHelper.normalizar(components.getString("road"));
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.err.println("Erro ao buscar logradouro pelo OpenCage API: " + e.getMessage());
+            e.printStackTrace();
         }
-
         return null;
     }
+
 }
 

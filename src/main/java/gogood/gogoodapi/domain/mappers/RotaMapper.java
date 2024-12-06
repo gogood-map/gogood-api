@@ -10,6 +10,7 @@ import gogood.gogoodapi.repository.QuantidadeOcorrenciaRuaRepository;
 import gogood.gogoodapi.service.GeocodingService;
 import gogood.gogoodapi.service.MapService;
 import gogood.gogoodapi.utils.DecoderPolyline;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class RotaMapper {
     @Autowired
     GeocodingService geocodingService;
@@ -36,6 +38,7 @@ public class RotaMapper {
     }
 
     public List<Rota> toRota(DirectionsResult result) {
+        log.info("Transformando resultado da rota (toRota)");
         return Arrays.stream(result.routes).limit(3).map(directionsRoute -> {
                     var resultadoRotaGoogleRota = directionsRoute.legs[0];
                     Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
@@ -110,6 +113,7 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota) {
+        log.info("Definindo logradouros da rota (definirLogradouros)" + rota.getEtapas());
         List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas());
 
         rota.setLogradouros(logradouros);

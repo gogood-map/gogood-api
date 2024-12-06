@@ -6,6 +6,7 @@ import gogood.gogoodapi.utils.StringHelper;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class GeocodingService {
 
     private final WebClient webClient;
@@ -40,6 +42,7 @@ public class GeocodingService {
     }
 
     private String getLogradouro(Etapa etapa) {
+        log.info("Buscando logradouro da etapa (antes de escolher entre Google e OpenCage, getLogradouro)");
         Coordenada coordenada = etapa.getCoordenadaFinal();
         String logradouro = testFlag ? fetchLogradouroGoogle(coordenada) : fetchLogradouroOpenCage(coordenada);
         if (logradouro == null) {
@@ -49,6 +52,7 @@ public class GeocodingService {
     }
 
     private String fetchLogradouroGoogle(Coordenada coordenada) {
+        log.info("Buscando logradouro pelo Google API (fetchLogradouroGoogle)");
         try {
             Dotenv dotenv = Dotenv.load();
             String googleApiKey = dotenv.get("GOOGLE_API_KEY");
@@ -89,6 +93,7 @@ public class GeocodingService {
     }
 
     private String fetchLogradouroOpenCage(Coordenada coordenada) {
+        log.info("Buscando logradouro pelo OpenCage API (fetchLogradouroOpenCage)");
         try {
             Dotenv dotenv = Dotenv.load();
             String openCageApiKey = dotenv.get("OPENCAGE_API_KEY");

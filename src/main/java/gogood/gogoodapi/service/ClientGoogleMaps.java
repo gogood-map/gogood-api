@@ -39,7 +39,7 @@ public class ClientGoogleMaps {
         try {
             return request.await();
         } catch (Exception e) {
-            log.error("Erro ao obter resposta da rota (obterRespostaRota)");
+            log.error("Erro ao obter resposta da rota (obterRespostaRota)" + e.getMessage());
             throw new ResponseStatusException(HttpStatusCode.valueOf(500), "Não foi possível gerar rota. Detalhe mais a origem/destino ou tente novamente mais tarde");
         }
     }

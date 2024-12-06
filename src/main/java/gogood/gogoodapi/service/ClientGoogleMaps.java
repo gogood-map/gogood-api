@@ -31,7 +31,6 @@ public class ClientGoogleMaps {
         return request;
     }
     public static DirectionsResult obterRespostaRota(String origem, String destino, TravelMode modoTransporte) {
-        log.info("Obtendo resposta da rota (obterRespostaRota)");
         DirectionsApiRequest request = gerarRequestRota();
         request.mode(modoTransporte);
         request.destination(destino);

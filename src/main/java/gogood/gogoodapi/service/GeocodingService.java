@@ -42,7 +42,6 @@ public class GeocodingService {
     }
 
     private String getLogradouro(Etapa etapa) {
-        log.info("Buscando logradouro da etapa (antes de escolher entre Google e OpenCage, getLogradouro)");
         Coordenada coordenada = etapa.getCoordenadaFinal();
         String logradouro = testFlag ? fetchLogradouroGoogle(coordenada) : fetchLogradouroOpenCage(coordenada);
         if (logradouro == null) {
@@ -52,7 +51,7 @@ public class GeocodingService {
     }
 
     private String fetchLogradouroGoogle(Coordenada coordenada) {
-        log.info("Buscando logradouro pelo Google API (fetchLogradouroGoogle)");
+        log.info("Buscando logradouro pelo Google API");
         try {
             Dotenv dotenv = Dotenv.load();
             String googleApiKey = dotenv.get("GOOGLE_API_KEY");
@@ -93,7 +92,7 @@ public class GeocodingService {
     }
 
     private String fetchLogradouroOpenCage(Coordenada coordenada) {
-        log.info("Buscando logradouro pelo OpenCage API (fetchLogradouroOpenCage)");
+        log.info("Buscando logradouro pelo OpenCage API");
         try {
             Dotenv dotenv = Dotenv.load();
             String openCageApiKey = dotenv.get("OPENCAGE_API_KEY");

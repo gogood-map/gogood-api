@@ -38,7 +38,6 @@ public class RotaMapper {
     }
 
     public List<Rota> toRota(DirectionsResult result) {
-        log.info("Transformando resultado da rota (toRota)");
         return Arrays.stream(result.routes).limit(3).map(directionsRoute -> {
                     var resultadoRotaGoogleRota = directionsRoute.legs[0];
                     Rota rotaAtual = transformarRota(resultadoRotaGoogleRota);
@@ -113,7 +112,6 @@ public class RotaMapper {
     }
 
     private void definirLogradouros(Rota rota) {
-        log.info("Definindo logradouros da rota (definirLogradouros)" + rota.getEtapas());
         List<String> logradouros = geocodingService.buscarLogradouros(rota.getEtapas());
 
         rota.setLogradouros(logradouros);

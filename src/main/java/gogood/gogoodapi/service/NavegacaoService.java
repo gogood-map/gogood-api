@@ -16,7 +16,6 @@ import java.util.UUID;
 public class NavegacaoService {
     @Cacheable(value = "rotas", key = "#origem.concat('-').concat(#destino)", unless = "#result == null")
     public List<Rota> escolherStrategy(String id, RotaStrategy estrategiaRota, String origem, String destino) {
-        log.info("Escolhendo estratégia de rota (escolherStrategy)");
         return montarRotas(origem, destino, estrategiaRota);
     }
 
